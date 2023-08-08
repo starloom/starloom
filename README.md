@@ -1,8 +1,32 @@
-# fortunetelling
+# StarLoom:基于AI的算命与占卜系统
+欢迎来到StarLoom，一个由GPT-4和GPT-3.5驱动的前沿占卜系统。深入探索宇宙的奥秘，探索您的星座，并揭开命运的秘密，所有这些都得益于人工智能的帮助。
 
-### examples
-```sh
-curl -X POST -H "Content-Type: application/json" -d '{"xingzuo": "jinniu"}' http://localhost:8101/xingzuo/xingge
-curl -X POST -H "Content-Type: application/json" -d '{"xingzuo": "shuangzi"}' http://localhost:8101/xingzuo/yunshi
-curl -X POST -H "Content-Type: application/json" -d '{"xingzuo": "shuangzi"}' http://localhost:8101/xingzuo/match
-```
+## 主要功能
+
+1. 生肖星座
+    - 星座查询
+    - 星座运势
+    - 生肖查询
+    - 生肖运势
+    - 下降星座
+    - 星座排行榜
+    - 生日花
+    - 月亮星座
+    - 48星区
+    - 生日密码
+    - 生日书
+    - 测试出轨对象
+    - 星座与血型性格
+2. 生辰八字
+3. 起名与名字测试
+4. 婚姻配对
+5. 公司起名
+6. 周公解梦
+7. 黄历吉日
+8. 号码凶吉
+
+## 为什么选择StarLoom？
+- 尖端技术：StarLoom采用最新的GPT-4和GPT-3.5模型，提供准确且富有洞察力的解读。
+- 全面的模块：从星座到解梦，StarLoom涵盖了占卜的各个方面。
+- 用户友好的界面：即使对于那些不熟悉占卜和星座的人也很容易使用。
+
