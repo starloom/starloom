@@ -1,4 +1,7 @@
+[![Starloom](./images/mainpage2.jpg)](https://starloom.ai)
+
 # StarLoom:基于AI的算命与占卜系统
+
 欢迎来到StarLoom，一个由GPT-4和GPT-3.5驱动的前沿占卜系统。深入探索宇宙的奥秘，探索您的星座，并揭开命运的秘密，所有这些都得益于人工智能的帮助。
 
 [传送门:starloom.ai](https://starloom.ai/#/)
