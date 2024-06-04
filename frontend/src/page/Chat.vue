@@ -1,21 +1,25 @@
 <template>
   <div class="chat" ref="chatContent" :class="screenWidth<=900? 'mb-chat' : ''">
     <div class="topDiv">
-      <div>对话分享{{ time }}</div>
+      <div>{{ $t('shareConversation') }}{{ time }}</div>
       <div class="try" @click="goIndex">
-        立即尝试
+        {{ $t('trynow') }}
       </div>
     </div>
     <div class="chatListbox">
       <template v-for="(item,index) in chatList" :key="index">
           <!-- 文字对话 -->
           <!-- v-if="item.type  == 'text' || item.role == 'user'" -->
-          <template  v-if="item.showtype  == 'text' || item.type  == 'text' || item.role == 'user'">
+          <template  v-if="item.showtype  == 'text' || item.showtype  == 'gpt' || item.type  == 'text' || item.role == 'user'">
               <div class="chat-list" :class="item.role == 'user' ? 'right-content' : ''">
                   <div v-if="item.role == 'user'" class="question">
                   <div class="text-content">
-                          <div class="inner" v-html="item.content">
-                        
+                          <!-- v-html="item.content" -->
+                          <div class="inner" >
+                            <div v-if="item.base64_type == 1 && item.base64_content">
+                              <img :src="item.base64_content" alt="">
+                            </div>
+                            {{ item.content }}
                           </div>
                   </div>
                   <img v-if="screenWidth>900" src="/@/assets/images/user.png" alt="">
@@ -23,7 +27,7 @@
                   <div v-if="item.role == 'assistant'" class="answer">
                     <div class="BotHeader">
                       <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                      <div v-if="screenWidth<=900">天机阁</div>
+                      <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                     </div>
                       <div class="text-content">
                           <div class="inner" v-html="item.content">
@@ -127,17 +131,17 @@
     </div>
   
     <div class="xian">
-        在天机阁继续聊天
+      {{ $t('ContinueOnStarloom') }}
     </div>
     <div class="bottomDiv" :class="screenWidth<=900?'mb':''">
         
         <div  class="noLogin" @click="continueChatting">
             <img src="/@/assets/images/gochat.png" alt="" srcset="">
-            继续聊天
+            {{ $t('continueChatting') }}
         </div>
         <div class="addBtn" @click="addChatHandle">
             <img src="/@/assets/images/add.png" alt="">
-            新增对话
+            {{ $t('addChat') }}
         </div>
     </div>
   </div>
@@ -437,6 +441,7 @@ export default {
         padding: 0 .3rem;
         border-radius: .4rem;
         line-height: .6rem;
+        cursor: pointer;
       }
     }
     .chatListbox{
@@ -499,6 +504,11 @@ export default {
                         background: #FFECBD;
                         border-radius: .25rem .1rem  .25rem  .25rem;
                         color: #000000;
+                        img{
+                          width: 100%;
+                          height: 100%;
+                          margin-bottom: 0.2rem;
+                        }
                       }
                   }
                  

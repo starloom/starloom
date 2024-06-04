@@ -10,8 +10,8 @@
         </div>
         <div class="tab">
           <!-- {{ $t('navs') }} -->
-            <div class="item" @click="changeChatType('navs')" :class="chatType == 'navs' ? 'active' : ''">导航</div>
-            <div class="item" @click="changeChatType('Chats')" :class="chatType == 'Chats' ? 'active' : ''">问卦</div>
+            <div class="item" @click="changeChatType('navs')" :class="chatType == 'navs' ? 'active' : ''">{{ $t('navigation') }}</div>
+            <div class="item" @click="changeChatType('Chats')" :class="chatType == 'Chats' ? 'active' : ''">{{ $t('askReddit') }}</div>
         </div>
         <div class="serach-content">
             <input v-model="searchText" type="text" :placeholder="$t('search')">
@@ -22,7 +22,7 @@
                 <li @click="chooseType(item)" v-for="(item, index) in showtabList" :key="index" :class="item.type == navQueryType.type ? 'active' : ''">
                     <img :src="item.img" alt="">
                     <div class="mid"> 
-                      {{ item.displayName }} 
+                      {{  $t(item.displayName ) }} 
                     </div>
                     <div v-if="item.type == navQueryType.type">
                       <img class="activeimg" src="/@/assets/images/activeType.png" alt="">
@@ -53,7 +53,7 @@
                             <div v-else class="check select">✓</div>
                         </template>
                         <div class="text">
-                            {{item.content}}
+                            {{ item.base64_type == 1 ? '图片解析' : item.base64_type == 2 ? '语音解析' : item.content}}
                         </div>
                           <!-- <img src="/@/assets/imgs/star.svg" alt=""> -->
                     </li>
@@ -101,6 +101,8 @@ export default {
     const chooseType = (item) => {
         router.push({ name: 'index' })
       store.commit('setNavQueryType', item)
+      store.commit('setImgBase64', '')
+      EventBus.$emit('closeVectorHandle')
       if(screenWidth.value<=900){
         instance.proxy.closeMenuHandle()
       }
@@ -112,11 +114,13 @@ export default {
             router.push({ name: 'index' })
             chatList.value = []
         } else if (type=='Chats' && chatType.value != 'Chats'){
-            await instance.proxy.getMsgGroupList()
             store.commit('setChatType', type)
+            await instance.proxy.getMsgGroupList()
             addChat()
             // router.push({ name: 'askDivination' })
         }
+        EventBus.$emit('closeVectorHandle')
+        store.commit('setImgBase64', '')
         store.commit('setSelectStatus', false)
         store.commit('setSelectType', '')
     }
@@ -142,7 +146,7 @@ export default {
         if(searchText.value == ''){
             return tabList.value
         }else{
-            const list = tabList.value.filter(item => item.displayName.indexOf((searchText.value)) != -1)
+            const list = tabList.value.filter(item => t(item.displayName).indexOf((searchText.value)) != -1)
             return list
         }
     })
@@ -364,36 +368,12 @@ export default {
         // this.$emit("closeDrawer")
         EventBus.$emit('closeDrawer', '')
     }
-    // async getCoinList(){
-    //     const res = await getCoinList()
-    //     console.log(res)
-    //     if(res.code == 200){
-    //         this.coinList = res.data
-    //     }
-    // }
   },
   mounted() {
-    // this.getMsgGroupList()
+    this.getMsgGroupList()
     EventBus.$on('getMsgGroupList', () => {
         this.getMsgGroupList()
     })
-    // this.chatList = [
-    //     {
-    //         text: '什么是Bitcoin?',
-    //         choose: false,
-    //         id: ''
-    //     },
-    //     {
-    //         text: 'Bitcoin的团队有哪些?',
-    //         choose: false,
-    //         id: ''
-    //     },
-    //     {
-    //         text: '比特币的投资机构有哪些?',
-    //         choose: false,
-    //         id: ''
-    //     },
-    // ]
   },
   unmounted() {
     EventBus.$off('getMsgGroupList', () => {

@@ -14,39 +14,39 @@
         </template> -->
         <div class="maxbox">
           <div class="cont">
-            <div class="text">选择订阅类型</div>
+            <div class="text">{{ $t('chooseSubscriptionType') }}</div>
             <div class="contBox">
               <div class="advantages">
-                <div>订阅天机阁，探寻跨时代交汇的智慧！</div>
+                <div>{{ $t('subscribeSloganTittle') }}</div>
                 <!-- <span class="fontYellow">16% </span> 的折扣。 -->
               </div>
               <ul class="advantagesBox">
                 <li>
                   <img src="/@/assets/images/duigou_green.svg" alt="">
-                  专享的专线服务，更加迅速和独特的指引和解读。
+                  {{ $t('subscribeSlogan1') }}
                 </li>
                 <li>
                   <img src="/@/assets/images/duigou_green.svg" alt="">
-                  玄学领域更先进的模型，整合了市面上主流的模型，大量垂直领域的知识训练。
+                  {{ $t('subscribeSlogan2') }}
                 </li>
                 <li>
                   <img src="/@/assets/images/duigou_green.svg" alt="">
-                  近万条开光数据加持。回答更加精准
+                  {{ $t('subscribeSlogan3') }}
                 </li>
                 <li>
                   <img src="/@/assets/images/duigou_green.svg" alt="">
-                  独家整合的中外玄学理论体系
+                  {{ $t('subscribeSlogan4') }}
                 </li>
               </ul>
               <ul class="type_ul">
                 <li class="ci" v-for="(item, index) in paylist.slice(0, 2)" :key="index" @click="chooseCardTypeHandle(item)" :class="user_card_type?.card_type == item.card_type ? 'active' : ''">
                   <div class="left">
-                    {{ item.time }}次 无限期
+                    {{ item.time }}{{ item.time==1? $t('Time1') : $t('Times15')}}  {{ $t('unlimited') }}
                     <span class="fontYellow">{{ item.real_price }} </span> 
                     <span class="originalPrice">￥{{ item.display_price }}</span>
                   </div>
                   <div class="right" v-if="item.discount_description">
-                    {{ item.discount_description }}
+                    {{ $t('limitedTime30') }}
                   </div>
                 </li>
               </ul>
@@ -54,7 +54,7 @@
                 <li class="cycle" v-for="(item1, index1) in paylist.slice(2, 5)" :key="index1" @click="chooseCardTypeHandle(item1)" :class="user_card_type?.card_type == item1.card_type ? 'active' : ''">
                   <div class="topbox">
                     <div class="card">{{ item1.card_name }}</div>
-                    <div class="cishu">{{item1.time}}次</div>
+                    <div class="cishu">{{item1.time}} {{  $t('Times15') }}</div>
                   </div>
                   <div class="price">￥{{ item1.real_price }} <span class="originalPrice">￥{{ item1.display_price }}</span></div>
                 </li>
@@ -62,7 +62,7 @@
             </div>
             <div class="bottom">
               <div class="closeBtn" @click="PaymentMethod">
-              {{ plus ? '续费' : '订阅' }}
+              {{ plus ? $t('renewal'): $t('subscribe')  }}
               </div>
             </div>
           </div>
@@ -289,7 +289,7 @@
               align-items: center;
               padding: .2rem;
               font-size: .35rem;
-              height: .8rem;
+              // height: .8rem;
               margin-bottom: .15rem;
               .right{
                 background: #FF5C00;
@@ -300,6 +300,7 @@
                 height: .6rem;
                 line-height: .6rem;
                 border-radius: .4rem;
+                white-space: nowrap;
               }
               .originalPrice{
                 font-family: Roboto-Medium, Roboto;

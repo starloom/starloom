@@ -5,11 +5,11 @@
             <div  class="answer">
               <div class="BotHeader">
                 <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                <div v-if="screenWidth<=900">天机阁</div>
+                <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
               </div>
             <div class="text-content">
                 <div class="inner">
-                    <div class="zindex">我是一位跨领域的专家，深入研究和了解各种事物。从古老的智慧到现代科技，我的知识覆盖了众多领域。无论是复杂的问题还是简单的疑惑，我都随时准备为此提供答案和分析。有什么想了解或探讨的吗？</div>
+                    <div class="zindex">{{ $t('AskReddit_openremarks') }}</div>
                     <div class="xiangyun"></div>
                 </div>
             </div>
@@ -18,15 +18,15 @@
       <template v-for="(item,index) in chatList" :key="index">
           <!-- 文字对话 -->
           <!-- v-if="item.type  == 'text' || item.role == 'user'" -->
-          <template  v-if="(item.showtype  == 'text' || item.type  == 'text' || item.role == 'user') && !item.islike">
+          <template  v-if="(item.showtype  == 'text' || item.showtype  == 'gpt' || item.type  == 'text' || item.role == 'user') && !item.islike">
               <div class="chat-list" :class="item.role == 'user' ? 'right-content' : ''">
                 <div class="select" v-if="selectStatus" @click="item.choose =!item.choose">
                   <img v-if="!item.choose" src="/@/assets/images/choose.png" alt="" srcset="">
                   <img v-if="item.choose" src="/@/assets/images/choose2.png" alt="">
                 </div>
                   <div v-if="item.role == 'user'" class="question" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
-                  <div class="text-content">
-                    <el-popover
+                    <div class="text-content">
+                    <!-- <el-popover
                         v-model:visible="item.sharePopover"
                         placement="bottom"
                         trigger="click"
@@ -38,13 +38,36 @@
                           <img src="/@/assets/images/more.png" alt="">
                         </template>
                         <template #default>
-                          <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                          <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                          <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
+                          <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                          <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                          <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
                         </template>
-                    </el-popover>
-                      <div class="inner" v-html="item.content">
+                    </el-popover> -->
+                    <el-popover
+                      placement="top"
+                      effect="dark"
+                      :width="screenWidth> 900 ?260 : 220"
+                      popper-style="border-radius:0.2rem;background: #000000;padding: 10px;"
+                    >
+                    <template #reference>
+                      <div class="inner">
+                        <div v-if="item.base64_type == 1 && item.base64_content">
+                          <img :src="item.base64_content" alt="">
+                        </div>
+                        {{ item.content }}
+                        <!-- <div v-html="item.content"></div> -->
                       </div>
+                    </template>
+                    <template #default>
+                      <div class="setList" :class="screenWidth<= 900?'mb-setList':''">
+                        <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                        <div class="xian"></div>
+                        <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                        <div class="xian"></div>
+                        <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                      </div>  
+                    </template>
+                  </el-popover>  
                   </div>
                   <img v-if="screenWidth>900" src="/@/assets/images/user.png" alt="">
                   </div>
@@ -52,9 +75,9 @@
                     <div class="BotHeader mb">
                       <div class="left">
                         <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                        <div v-if="screenWidth<=900">天机阁</div>
+                        <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                       </div> 
-                      <el-popover
+                      <!-- <el-popover
                           v-model:visible="item.sharePopover"
                           placement="bottom"
                           trigger="click"
@@ -66,17 +89,33 @@
                             <img src="/@/assets/images/more.png" alt="">
                           </template>
                           <template #default>
-                            <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                            <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                            <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
+                            <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                            <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                            <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
                           </template>
-                      </el-popover>
+                      </el-popover> -->
                     </div>
                       <div class="text-content">
-                          <div class="inner" v-html="item.content">
-                           
-                          </div>
-                          <el-popover
+                        <el-popover
+                          placement="top"
+                          effect="dark"
+                          :width="screenWidth> 900 ?260 : 220"
+                          popper-style="border-radius:0.2rem;background: #000000;padding: 10px;"
+                        >
+                        <template #reference>
+                          <div class="inner" v-html="item.content"></div>
+                        </template>
+                          <template #default>
+                            <div class="setList" :class="screenWidth<= 900?'mb-setList':''">
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div class="xian"></div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="xian"></div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                            </div>
+                          </template>
+                        </el-popover>  
+                          <!-- <el-popover
                               v-model:visible="item.sharePopover"
                               placement="bottom"
                               trigger="click"
@@ -88,16 +127,36 @@
                                 <img src="/@/assets/images/more.png" alt="">
                               </template>
                               <template #default>
-                                <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                                <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                                <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
+                                <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                                <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                                <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
                               </template>
-                          </el-popover>
+                          </el-popover> -->
                           <!--   {{item.content}} --> 
                           <!-- v-html="item.content" -->
                       </div>
                   </div>
               </div>
+              <div class="chatBotton" v-if="index == chatlist_index && !loading && !selectStatus" :class="screenWidth<=900?'mb_chatBotton' : ''">
+            <div class="share" @click="shareHandle(item)">
+              <img src="/@/assets/images/share_yellow.svg" alt="" srcset="">
+              {{ $t('share') }}
+            </div>
+            <div class="likediv" v-if="!item.likeType" @click="likeHandle(1,item)">
+              <img src="/@/assets/images/like.svg" alt="" srcset="">
+              {{ $t('like') }}
+            </div>
+            <div class="likediv" v-if="!item.likeType" @click="showdislikeDialog(item)">
+              <img src="/@/assets/images/dislike.svg" alt="" srcset="">
+              {{ $t('dislike') }}
+            </div>
+            <div class="chooseIsLike" v-if="item.likeType == 1">
+              <img src="/@/assets/images/like2.svg" alt="" srcset="">
+            </div>
+            <div class="chooseIsLike" v-if="item.likeType == 2 || item.likeType == 3 || item.likeType == 4">
+              <img src="/@/assets/images/dislike2.svg" alt="" srcset="">
+            </div>
+          </div>
           </template> 
           <template v-if="item.role == 'assistant' && item.showtype == 'tem' && !item.islike">
                 <!-- 生肖查询 -->
@@ -187,32 +246,17 @@
                   <ConsteBloodPersonality :presetData="item.content"/>
                 </template>
           </template>
-          <div class="chatBotton" v-if="index == chatlist_index && !loading && !selectStatus" :class="screenWidth<=900?'mb_chatBotton' : ''">
-            <div class="share" @click="shareHandle(item)">
-              <img src="/@/assets/images/share_yellow.svg" alt="" srcset="">
-              分享
-            </div>
-            <div class="likediv" v-if="!item.likeType" @click="likeHandle(1,item)">
-              <img src="/@/assets/images/like.svg" alt="" srcset="">
-              喜欢
-            </div>
-            <div class="likediv" v-if="!item.likeType" @click="showdislikeDialog(item)">
-              <img src="/@/assets/images/dislike.svg" alt="" srcset="">
-              不喜欢
-            </div>
-            <div class="chooseIsLike" v-if="item.likeType == 1">
-              <img src="/@/assets/images/like2.svg" alt="" srcset="">
-            </div>
-            <div class="chooseIsLike" v-if="item.likeType == 2 || item.likeType == 3 || item.likeType == 4">
-              <img src="/@/assets/images/dislike2.svg" alt="" srcset="">
-            </div>
-          </div>
+          <template v-if="item.showtype  =='dateTime' && item.role == 'assistant' && !item.islike ">
+              <DateTimeSelect 
+                @sendDateTime="sendDateTime"
+              />
+          </template>
       </template>
       <div class="chat-list" v-if="loading">
           <div class="answer">
               <div class="BotHeader">
                 <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                <div v-if="screenWidth<=900">天机阁</div>
+                <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
               </div>
               <div class="text-content">
                   <div class="inner">
@@ -268,6 +312,7 @@
   import AstrologicalHouseChart from '/@/components/AstrologicalHouseChart.vue'
   import PlanetInHouse from '/@/components/PlanetInHouse.vue'
   import PlanetInSign from '/@/components/PlanetInSign.vue'
+  import DateTimeSelect from '/@/components/ChatComponent/DateTimeSelect.vue'
   
   import { GPTChat, xingzuoYunshi, shengxiaoYunshi, shengxiaoQuery, xingzuoChaxun, xingzuoShengrishu,
    xingzuoShengrimima, xingzuoShengrihua, xingzuoRankingList, xingzuoRankingGet, xingzuoRankingQuestion,
@@ -280,6 +325,7 @@
   import { marked } from 'marked'
   const url_pro = 'https://starloom.mpcbot.ai/chat';
   const url_test = 'https://testastroai.mpcbot.ai/chat';
+  const baseUrl = import.meta.env.VITE_APP_BASE_API
   import { useI18n } from 'vue-i18n'
   export default {
     name: 'Chat',
@@ -304,13 +350,19 @@
       const selectStatus = computed(() => store.state.selectStatus)
       const selectType = computed(() => store.state.selectType)
       const apiurl = computed(() => store.state.apiurl)
+      const v1chatUrl = computed(() => store.state.v1chatUrl)
       const userModel = computed(() => store.state.userModel)
       // const likeType = ref('')
       const sharelink = computed(() => store.state.sharelink)//分享链接
       const haveCount =computed( () => store.state.haveCount) // 是否有条数
+      const receiveType = computed(() => store.state.receiveType)
       const list_current = ref('')
       const likeItemObj = ref('')
       const likeLoading = ref(false)
+      const dateVal = ref('')
+      const timeVal = ref('')
+      const gender = ref('male')  // 性别
+
       let eventSource
       const chatlist_index = computed(() => {   //当前模块list
         list_current.value = chatList.value.filter(item => item.role == 'assistant' && !item.islike )
@@ -335,24 +387,86 @@
       const loginStatus = computed( () => {
         return store.state.loginStatus
       }) 
-      const sendMessage = async (questionText, tabIndex, index) => {
-        saveQuestion.value = questionText
-        // 监听对话的回调 目前分为预设1,2,3 以及文本对话
+      const sendMessage = async (requestObj, reqType, temReqObj, tabIndex, index) => {
+        let questionText = requestObj.question
+        let fileBase64String = requestObj.base64String
+        let baseType = requestObj.base64_type
+        const user_receive_type = requestObj.base64_type == 2 ? receiveType.value == 'audio'? 2 : 1 : 1// 用户需要返回类型：1-纯文本；2-语音和文本 
         console.log('问题内容：：：', questionText)
-        if(loading.value || questionText == ''){
+        if(loading.value) return
+       if(baseType == 2){
+          if(fileBase64String == ''){
                 return
-        }     
+          } 
+        } else {
+          if(questionText == '' ){
+                return
+          } 
+        }  
+        // if(loading.value || questionText == ''){
+        //       return
+        // } 
+        if(reqType == 'DateTime'){ 
+          const dateObj = temReqObj
+          if(dateObj){
+            dateVal.value = dateObj.date
+            timeVal.value = dateObj.time
+            gender.value = dateObj.sex
+          }
+          if(!dateVal.value ){
+            ElMessage({
+                message: t('pleaseSelectDate'),
+                type: 'error',
+              })
+              return  
+          }
+          if(!timeVal.value ){
+            ElMessage({
+                message: t('pleaseSelectTime'),
+                type: 'error',
+              })
+              return  
+          }
+        } else if(reqType == 'likeFun'){
+          const _liketype = temReqObj.likeType
+          if(_liketype){
+            if(_liketype == 1){ // 喜欢
+              questionText = t('likeChat')
+            } else if(_liketype == 2){  //不准确
+              questionText = t('inaccurateChat')
+            } else if(_liketype == 3){ //无益
+              questionText = t('unhelpfulChat')
+            } else if(_liketype == 4){ //攻击性
+              questionText = t('offensiveChat')
+            }
+          } 
+        }
+        saveQuestion.value = questionText  
+        let chat 
           if(!tabIndex && tabIndex !=0 ){
-            const chat = {
+            chat = {
               role: 'user',
               content:questionText,
               copyText: questionText,
               showtype:'text',
               msggroup: chatId,
               islike: false,
+              base64_type: requestObj.base64_type,
+              base64_content:fileBase64String,
+              user_receive_type: user_receive_type,// 用户需要返回类型：1-纯文本；2-语音和文本 
             }
-            chatList.value.push(chat)
-            loading.value = true
+            if(reqType == 'likeFun'){
+              chat.islike = true
+            }
+            // chatList.value.push(chat)
+            if(reqType == 'likeFun'){
+              likeLoading.value = true
+            }else{
+              loading.value = true
+            }
+            if(requestObj.base64_type ==2 ){
+              store.commit('setGptAudioLoading', true)
+            }
             // likeType.value = ""
             step.value = 1
           }
@@ -361,22 +475,58 @@
               store.commit('setQuestion', '')
           },50)
           let userQueList = []
-          chatList.value.forEach(item =>  {
+          let chat1
+          if(reqType == 'likeFun'){
+              chat1 = chatList.value.filter(item=>!item.islike)
+          }else{
+            chat1 = chatList.value
+          }
+          chat1.forEach(item =>  {
               // if(item.role == 'user'){
                 userQueList.push({ 
-                  "type": item.role == 'user'? 'user' : item.showtype,
-                  "content": item.copyText
+                  "type": item.role == 'user'|| item.showtype=='date-transfered-message' ? 'user' : item.showtype,
+                  "content": item.copyText,
+                  "msgId": item.msgId ? item.msgId:'',  
+                  "base64_type": item.base64_type ? item.base64_type : 0,  // 是否是图片消息，1是；0否
+                  "base64_content": "",
+                  "file_type": item.base64_type==2?"mp3":'', // 文件的类型
+                  "user_receive_type": item.user_receive_type ? item.user_receive_type : 1,// 用户需要返回类型：1-纯文本；2-语音和文本 
                 })
               // }
             })
-            const requestData =  {
-                "messages":userQueList,
-                "module": "0",
-                "msggroup": chatId,
-                "gpt_mode": userModel.value == '3.5'? 1 : 2,
-              }
+            if(reqType != 'DateTime'){
+              userQueList.push({
+                "type": chat.role,
+                "content": chat.content,
+                "msgId": chat.msgId ? chat.msgId:'',  
+                "base64_type": requestObj.base64_type ? requestObj.base64_type : 0,  // 是否是图片消息，1是；0否
+                "base64_content": requestObj.base64_type == 1 ? fileBase64String :  requestObj.base64_type == 2 ? fileBase64String.split("base64,")[1] : '', // 文件的base64编码
+                "file_type": requestObj.base64_type!=2 ? '' : 'mp3', // 文件的类型
+                "user_receive_type": user_receive_type,
+              })
+            } 
+            if(requestObj.base64_type !=2 && reqType != 'DateTime'){
+              chatList.value.push(chat)
+            } 
+            if(timeVal.value){
+              timeVal.value = timeVal.value.replace(':', '-')
+            }  
+            let requestData =  {
+              "messages":userQueList,
+              "module": "0",
+              "msggroup": chatId,
+              "gpt_mode": userModel.value == '3.5'? 1 : 2,
+              islike: false,
+            }
+            if(reqType == 'DateTime'){
+              requestData.birthday = dateVal.value+'-'+timeVal.value;
+              requestData.sex = gender.value;
+            }
+            if(reqType == 'likeFun'){
+              requestData.islike = true
+            }
           try{
-            eventSource = new SSE(apiurl.value, {
+            eventSource = new SSE(v1chatUrl.value, {
               headers: {
                 'Content-Type': 'application/json', 
                 'Authorization': localStorage.getItem('starloomAI-token'),
@@ -394,71 +544,154 @@
               // 第一次返回： text|tem
             // 如果 是tem ，第二次返回整个json字符串；如果是text，第二次，到第N次按照流输出一个字一个字的，遇到[DONE]结束
               console.log('1111,',event.data)
-              if(n==2) return
-              if(n==0){
-                const obj = JSON.parse(event.data)
-                chat = {
+              const obj = JSON.parse(event.data)
+              const objcontent = obj.content
+              chat = {
                   role: 'assistant',
                   // content:result.data.data,
                   showtype: obj.type,
                   submodel: obj.modelType,  //a-1
                   msggroup: chatId,
-                  msgId: obj.msgIds[1],
-                  islike: false,
+                  msgId: obj.msg_answer_id,
+                  islike: obj.islike,
                 }
-                resObj.value = JSON.parse(event.data)
+              resObj.value = JSON.parse(event.data)
+              if(requestObj.base64_type !=2 && reqType != 'DateTime'){
                 const lengthnum = chatList.value.length
-                chatList.value[lengthnum-1].msgId =  obj.msgIds[0]
-                n = 1
-              }else {
-                if(chat.showtype == 'tem'){
-                  eventSource.close()
-                  if(sxxzType.value.submodel == 'a-7'){
-                    if(event.data.totalCount){
-                      chat.questionType = 1
-                      event.data.data.noTab = true
-                    } else {
-                      chat.questionType = 2
-                    }
+                chatList.value[lengthnum-1].msgId =  obj.msg_question_id
+              }
+              n = 1
+              console.log('obj,',obj)
+              if(obj.type == 'tem'){ 
+                eventSource.close()
+                if(sxxzType.value.submodel == 'a-7'){
+                  if(obj.content.totalCount){
+                    chat.questionType = 1
+                    obj.content.noTab = true
+                  } else {
+                    chat.questionType = 2
                   }
-                  chat.content = JSON.parse(event.data)
-                  chat.copyText = JSON.parse(event.data)
-                  loading.value = false
-                  // loadingmodel.value = ''
+                }
+                chat.showtype = obj.type
+                chat.content = JSON.parse(event.data)
+                chat.copyText = JSON.parse(event.data)
+                loading.value = false
+                loadingmodel.value = ''
+                chatList.value.push(chat)
+                console.log('对话list：：：', chatList.value)
+              } else if(obj.type == 'gpt'){
+                if(requestObj.base64_type != 2){
+                  step.value = 2
+                  console.log('obj',obj)
+                
+                  // if (event.data.indexOf('<br><br>') != -1) {
+                  //     event.data = event.data.replace('<br><br>', '\n\n')
+                  // }
+                  // if(event.data.indexOf('<br>') != -1){
+                  //   event.data = event.data.replace('<br>','\n')
+                  // }
+                
+                  // if(obj.content == '[DONE]'){
+                  //     console.info('结束')
+                  //     loading.value = false
+                  //     chat.copyText = text.value
+                  //     chat.content = marked(text.value)
+                  //     chatList.value.push(chat)
+                  //     text.value = ''
+                  //     htmlText.value = ''
+                  //     step.value = 3
+                  //     chatNum.value += 1
+                  //     n=2
+                  //     eventSource.close()
+                  // }else{
+                    text.value += objcontent
+                    htmlText.value = marked(text.value);
+                    console.log('text.value,,,',text.value)
+                    setTimeout(() => {
+                        scrollToBottom() 
+                    },50)
+                  // }
+                }else{
+                  text.value += objcontent
+                }
+                
+              } else if(obj.type == 'gpt-audio'){
+                store.commit('setGptAudioLoading', false)
+                store.commit('setGptAudio',obj.content)
+              }else if(obj.type == 'text-user'){
+                chat = {
+                  role: 'user',
+                  content: obj.content,
+                  copyText: obj.content,
+                  showtype:'text',
+                  submodel: obj.modelType,
+                  msgId:obj.msg_question_id,
+                  msggroup: chatId,
+                  islike: false,
+                  base64_type: 0,
+                  base64_content: '',
+                }
+                if(requestObj.base64_type ==2 ){
                   chatList.value.push(chat)
-                  console.log('对话list：：：', chatList.value)
-                } else if (chat.showtype == 'text'){
-                  if (event.data === '[DONE]') {
+                }
+              }
+              else if(obj.type == 'date-transfered-message'){
+                if(reqType == 'DateTime'){
+                  chat.msgId = obj.msg_question_id
+                  chat.content = obj.content.content
+                  chat.copyText = obj.content.content
+                  chat.isDateTime = true
+                  chatList.value.push(chat)
+                }
+              }
+              else if(obj.type == '[DONE]'){
                     console.info('结束')
-                    loading.value = false
-                    chat.content = marked(text.value)
+                    chat.type = 'gpt'
+                    chat.showtype = 'gpt'
+                    if(reqType == 'likeFun'){
+                      likeLoading.value = false
+                    }else{
+                      loading.value = false
+                    }
                     chat.copyText = text.value
+                    chat.content = marked(text.value)
                     chatList.value.push(chat)
-                    step.value = 3
                     text.value = ''
                     htmlText.value = ''
+                    step.value = 3
                     chatNum.value += 1
                     n=2
                     eventSource.close()
-                  } else {
-                      step.value = 2
-                      console.log('event.data,,,',event.data)
-                      // if (event.data.indexOf('<br><br>') != -1) {
-                      //     event.data = event.data.replace('<br><br>', '\n\n')
-                      // }
-                      // if(event.data.indexOf('<br>') != -1){
-                      //   event.data = event.data.replace('<br>','\n')
-                      // }
-                      text.value += event.data
-                      htmlText.value = marked(text.value)
-                      setTimeout(() => {
-                          scrollToBottom() 
-                          store.commit('setQuestion', '')
-                      },50)
-                      console.log('text.value,,,',text.value)
-                  }
-                }
-                // chatNum.value += 1
+              }
+              else if (obj.type == 'error'){
+                    console.info('error')
+                    if(obj.code == 6001){
+                      EventBus.$emit('goSubscribe')
+                    }
+                    if(obj.code == 7001){
+                      chat = {
+                        role: 'assistant',
+                        // content:result.data.data,
+                        showtype: 'dateTime',
+                        msggroup: chatId,
+                        msgId: obj.msg_answer_id,
+                        islike: obj.islike,
+                      }
+                      chat.content = ''
+                      chatList.value.push(chat)
+                    }
+                    if(obj.code == 8101){
+                      ElMessage({
+                        message: t('serve500AlertTip'),
+                        type: 'error',
+                      })
+                    }
+                    loading.value = false
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    eventSource.close()
               }
             };
             eventSource.onerror = (error) => {
@@ -513,6 +746,184 @@
           }    
       }
 
+      const sendDateTime = async (dateObj) => {
+        sendMessage('','DateTime',dateObj)
+        return
+        if(loading.value){
+                return
+        } 
+        if(dateObj){
+          dateVal.value = dateObj.date
+          timeVal.value = dateObj.time
+          gender.value = dateObj.sex
+        }
+        if(!dateVal.value ){
+          ElMessage({
+              message: t('pleaseSelectDate'),
+              type: 'error',
+            })
+            return  
+        }
+        if(!timeVal.value ){
+          ElMessage({
+              message: t('pleaseSelectTime'),
+              type: 'error',
+            })
+            return  
+        }
+            // chatList.value.push(chat)
+            loading.value = true
+            // likeType.value = ""
+            step.value = 1
+          setTimeout(() => {
+              scrollToBottom() 
+              // dateVal.value = ''
+              // timeVal.value = ''
+              // gender.value = 'male'
+          },50)
+          let userQueList = []
+          chatList.value.forEach(item =>  {
+              // if(item.role == 'user'){
+                userQueList.push({ 
+                  "type": item.role == 'user'? 'user' : item.showtype,
+                  "content": item.copyText,
+                  "msgId": item.msgId ? item.msgId:'',  
+                  "base64_type": item.base64_type?item.base64_type : 0,  // 是否是图片消息，1是；0否
+                  "base64_content": '',
+                  "file_type": item.base64_type==2?"mp3":'', // 文件的类型
+                  "user_receive_type": item.user_receive_type,// 用户需要返回类型：1-纯文本；2-语音和文本 
+                })
+              // }
+            })
+          timeVal.value = timeVal.value.replace(':', '-')
+          const requestData =  {
+                "messages":userQueList,
+                "module": "0",
+                "msggroup": chatId,
+                "gpt_mode": userModel.value == '3.5'? 1 : 2,
+                birthday: dateVal.value+'-'+timeVal.value,
+                sex: gender.value,
+                islike:false,
+              }
+          try{
+
+            eventSource = new SSE(v1chatUrl.value, {
+              headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': localStorage.getItem('starloomAI-token'),
+              },
+              payload: JSON.stringify(requestData),
+              method: "POST"
+            });
+            console.info(eventSource)
+            eventSource.onopen = () => {
+                console.log('open')
+            }
+            let n = 0
+            let chat
+            eventSource.onmessage = function(event) {
+              console.log('1111,',event.data)
+              const obj = JSON.parse(event.data)
+              const objcontent = obj.content
+              chat = {
+                  role: 'assistant',
+                  // content:result.data.data,
+                  showtype: obj.type,
+                  submodel: obj.modelType,  //a-1
+                  msggroup: chatId,
+                  msgId: obj.msg_answer_id,
+                  islike: obj.islike,
+                }
+              resObj.value = JSON.parse(event.data)
+              n = 1
+              console.log('obj,',obj)
+              if(obj.type == 'tem'){ 
+                eventSource.close()
+                if(sxxzType.value.submodel == 'a-7'){
+                  if(obj.content.totalCount){
+                    chat.questionType = 1
+                    obj.content.noTab = true
+                  } else {
+                    chat.questionType = 2
+                  }
+                }
+                chat.showtype = obj.type
+                chat.content = JSON.parse(event.data)
+                chat.copyText = JSON.parse(event.data)
+                loading.value = false
+                loadingmodel.value = ''
+                chatList.value.push(chat)
+                console.log('对话list：：：', chatList.value)
+              } else if(obj.type == 'gpt'){
+                step.value = 2
+                console.log('obj',obj)
+              
+                // if (event.data.indexOf('<br><br>') != -1) {
+                //     event.data = event.data.replace('<br><br>', '\n\n')
+                // }
+                // if(event.data.indexOf('<br>') != -1){
+                //   event.data = event.data.replace('<br>','\n')
+                // }
+               
+                // if(obj.content == '[DONE]'){
+                //     console.info('结束')
+                //     loading.value = false
+                //     chat.copyText = text.value
+                //     chat.content = marked(text.value)
+                //     chatList.value.push(chat)
+                //     text.value = ''
+                //     htmlText.value = ''
+                //     step.value = 3
+                //     n=2
+                //     eventSource.close()
+                // }else{
+                  text.value += objcontent
+                  htmlText.value = marked(text.value);
+                  console.log('text.value,,,',text.value)
+                  setTimeout(() => {
+                      scrollToBottom() 
+                  },50)
+                // }
+              }else if(obj.content == '[DONE]'){
+                    console.info('结束')
+                    loading.value = false
+                    chat.showtype ='gpt'
+                    chat.copyText = text.value
+                    chat.content = marked(text.value)
+                    chatList.value.push(chat)
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    eventSource.close()
+                }
+              else if (obj.type == 'error'){
+                    console.info('error')
+                    if(obj.code == 6001){
+                      EventBus.$emit('goSubscribe')
+                    }
+                    loading.value = false
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    eventSource.close()
+              }
+            };
+            eventSource.onerror = (error) => {
+                console.error('EventSource failed:', error)
+                loading.value = false
+                loadingmodel.value = ''
+                step.value = 3
+                eventSource.close()
+            };
+            eventSource.stream();
+          }catch(error){
+            console.log('error',error)
+          }
+        
+    }
+
       const stopText = () =>{
         eventSource.close()
         const chat = {
@@ -522,7 +933,7 @@
           showtype: 'text',
           submodel: resObj.value.modelType,  //a-1
           msggroup: chatId,
-          msgId: resObj.value.msgIds[1],
+          msgId: resObj.value.msg_answer_id,
           islike: false,
         }
         chatList.value.push(chat)
@@ -545,7 +956,8 @@
                   "content": t('addChat'),
                   "type": "user",
                   "msggroup": route.params.id,
-                  "type":'newChat'
+                  "type":'newChat',
+                  "is_pic":0,
               }
               saveQuestion.value = ''
               EventBus.$emit('addChatList', chatListObj)
@@ -581,11 +993,13 @@
             list.forEach(item => {
                 const obj = {
                     role: item.type == 'user' ? 'user' : 'assistant',
-                    content: item.type == 'user' || item.type == 'text' ? marked(item.content) : JSON.parse(item.content),
-                    copyText: item.type == 'user' || item.type == 'text' ? item.content : JSON.parse(item.content),
-                    showtype: item.type == 'user' || item.type == 'text' ? 'text' : item.type,
+                    content:  item.type == 'text' || item.type == 'gpt'? marked(item.content) :item.type == 'user' ? item.base64_type==2 ? item.gen_by_gpt : item.content : JSON.parse(item.content),   // item.type == 'user' ||
+                    copyText: item.type == 'user' || item.type == 'text' || item.type == 'gpt'? item.content : JSON.parse(item.content),
+                    showtype: item.type == 'user' || item.type == 'text' || item.type == 'gpt'? 'gpt' : item.type,
                     submodel: item.sub_module,
                     msgId:item.id,
+                    base64_type:item.base64_type,
+                    base64_content:item.base64_content,
                 }
                 if(item.sub_module == 'a-7'){
                     if(item.content.totalCount){
@@ -789,7 +1203,7 @@
         console.log(list)
         if(list.length==0){
           ElMessage({
-              message: '您必须至少选择一条要删除的消息。',
+              message: t('mustSelectOneShare'),
               type: 'error',
             })
             return
@@ -841,7 +1255,7 @@
               //   'show-close': false,
               // })
               ElMessage({
-                message: '复制链接成功',
+                message:  t('linkCopiedSuccess'),
                 type: 'success',
               })
             //   // 复制成功
@@ -875,7 +1289,7 @@
         })
         if(list.length==0){
           ElMessage({
-              message: '您必须至少选择一条要删除的消息。',
+              message: t('mustSelectOneDelete'),
               type: 'error',
             })
             return
@@ -887,7 +1301,7 @@
           store.commit('setSelectStatus', false)
           store.commit('setSelectType', '') 
           ElMessage({
-            message: '删除成功',
+            message: t('deletedSuccess'),
             type: 'success',
           })
           return
@@ -903,7 +1317,7 @@
           //   'show-close': false,
           // })
           ElMessage({
-            message: '删除成功',
+            message: t('deletedSuccess'),
             type: 'success',
           })
           store.commit('setSelectStatus', false)
@@ -917,9 +1331,37 @@
       }
       const copyHandle =  async(item) => {
         const { toClipboard } = useClipboard()
+        let copyReplace = item.copyText
+        if (copyReplace.indexOf('<br><br>') != -1) {
+          copyReplace = copyReplace.replace(/<br><br>/g, '\n\n')
+        }
+        if(copyReplace.indexOf('<br>') != -1){
+          copyReplace = copyReplace.replace(/<br>/g,'\n')
+        }
+        if(copyReplace.indexOf('<p>') != -1){
+          copyReplace = copyReplace.replace(/<p>/g,'')
+        }
+        if(copyReplace.indexOf('</p>') != -1){
+          copyReplace = copyReplace.replace(/<\/?p>/g, '');
+        }
+        if(copyReplace.indexOf('<stong>') != -1){
+          copyReplace = copyReplace.replace(/<strong>/g,'')
+        }
+        if(copyReplace.indexOf('</strong>') != -1){
+          copyReplace = copyReplace.replace(/<\/?strong>/g, '');
+        }
+        if(copyReplace.indexOf('<b>') != -1){
+          copyReplace = copyReplace.replace(/<b>/g,'')
+        }
+        if(copyReplace.indexOf('</b>') != -1){
+          copyReplace = copyReplace.replace(/<\/?b>/g, '');
+        }
+        if(copyReplace.indexOf('**') != -1){
+          copyReplace = copyReplace.replace(/\*\*/g, '');
+        }
         try {
           // 复制
-          await toClipboard(item.copyText)
+          await toClipboard(copyReplace)
           console.log('success', ElMessage)
           // ElNotification({
           //   duration: 5000,
@@ -928,7 +1370,7 @@
           //   'show-close': false,
           // })
           ElMessage({
-            message: '复制成功',
+            message: t('copysuccess'),
             type: 'success',
           })
           // 复制成功
@@ -939,15 +1381,17 @@
 
       const likeHandle = (liketype, obj)=>{
         obj.likeType = liketype
+        sendMessage('','likeFun',obj)
+        return
         let questionText
         if(liketype == 1){ // 喜欢
-          questionText ='我非常赞同你上述回答，回复我“明白”即可！无需再回复任何信息。'
+          questionText = t('likeChat')
         } else if(liketype == 2){  //不准确
-          questionText ='你的上述回答不准确。回复我“明白”即可！无需再回复任何信息。'
+          questionText = t('inaccurateChat')
         } else if(liketype == 3){ //无益
-          questionText ='你的上述回答对我没有什么帮助。回复我“明白”即可！无需再回复任何信息。'
+          questionText = t('unhelpfulChat')
         } else if(liketype == 4){ //攻击性
-          questionText ='你的上述回答带有攻击性。回复我“明白”即可！无需再回复任何信息。'
+          questionText = t('offensiveChat')
         }
         const list_notlike =  chatList.value.filter(item=>!item.islike)
         // likeType.value = liketype
@@ -958,6 +1402,10 @@
           showtype:'text',
           msggroup: chatId,
           islike: true,
+          "base64_type": 0,  // 是否是图片消息，1是；0否
+          "base64_content": '',
+          "file_type": "", // 文件的类型
+          "user_receive_type": 1,// 用户需要返回类型：1-纯文本；2-语音和文本 
         }
         chatList.value.push(chat)
         list_notlike.push(chat)
@@ -965,7 +1413,12 @@
         list_notlike.forEach(item =>  {
             userQueList.push({ 
               "type": item.role == 'user'? 'user' : item.showtype,
-              "content": item.content
+              "content": item.content,
+              "msgId": item.msgId ? item.msgId:'',  
+              "base64_type": item.base64_type?item.base64_type : 0,  // 是否是图片消息，1是；0否
+              "base64_content": '',
+              "file_type": item.base64_type == 2?"mp3":'', // 文件的类型
+              "user_receive_type": item.user_receive_type,// 用户需要返回类型：1-纯文本；2-语音和文本 
             })
         })
         likeLoading.value = true
@@ -978,7 +1431,7 @@
               islike: true,
             }
         try{
-          eventSource = new SSE(apiurl.value, {
+          eventSource = new SSE(v1chatUrl.value, {
             headers: {
               'Content-Type': 'application/json', 
               'Authorization': localStorage.getItem('starloomAI-token'),
@@ -996,29 +1449,77 @@
             // 第一次返回： text|tem
           // 如果 是tem ，第二次返回整个json字符串；如果是text，第二次，到第N次按照流输出一个字一个字的，遇到[DONE]结束
             console.log('1111,',event.data)
-            if(n==2) return
-            if(n==0){
-              const obj = JSON.parse(event.data)
-              chat = {
+            // if(n==2) return
+            // if(n==0){
+            //   const obj = JSON.parse(event.data)
+            //   chat = {
+            //     role: 'assistant',
+            //     // content:result.data.data,
+            //     showtype: obj.type,
+            //     submodel: obj.modelType,  //a-1
+            //     msggroup:chatId,
+            //     msgId: obj.msgIds[1],
+            //     islike: obj.islike,
+            //   }
+            //   resObj.value = JSON.parse(event.data)
+            //   const lengthnum = chatList.value.length
+            //   chatList.value[lengthnum-1].msgId =  obj.msgIds[0]
+            //   n = 1
+            // }else {
+            //   if(chat.showtype == 'tem'){
+            //     eventSource.close()
+            //     if(sxxzType.value.submodel == 'a-7'){
+            //       if(event.data.totalCount){
+            //         chat.questionType = 1
+            //         event.data.data.noTab = true
+            //       } else {
+            //         chat.questionType = 2
+            //       }
+            //     }
+            //     chat.content = JSON.parse(event.data)
+            //     chat.copyText = JSON.parse(event.data)
+            //     chatList.value.push(chat)
+            //     console.log('对话list：：：', chatList.value)
+            //   } else if (chat.showtype == 'text'){
+            //     if (event.data === '[DONE]') {
+            //       console.info('结束')
+            //       chat.content = marked(text.value)
+            //       chat.copyText = text.value
+            //       chatList.value.push(chat)
+            //       text.value = ""
+            //       n=2
+            //       eventSource.close()
+            //       likeLoading.value = false
+            //     } else {
+            //         console.log('event.data,,,',event.data)
+            //         text.value += event.data
+            //         console.log('text.value,,,',text.value)
+            //     }
+            //   }
+            // }
+
+            const obj = JSON.parse(event.data)
+            const objcontent = obj.content
+            chat = {
                 role: 'assistant',
                 // content:result.data.data,
                 showtype: obj.type,
                 submodel: obj.modelType,  //a-1
-                msggroup:chatId,
-                msgId: obj.msgIds[1],
-                islike: obj.islike,
+                msggroup: chatId,
+                msgId: obj.msg_answer_id,
+                islike: true,
               }
               resObj.value = JSON.parse(event.data)
               const lengthnum = chatList.value.length
-              chatList.value[lengthnum-1].msgId =  obj.msgIds[0]
+              chatList.value[lengthnum-1].msgId =  obj.msg_question_id
               n = 1
-            }else {
-              if(chat.showtype == 'tem'){
+              console.log('obj,',obj)
+              if(obj.type == 'tem'){ 
                 eventSource.close()
                 if(sxxzType.value.submodel == 'a-7'){
-                  if(event.data.totalCount){
+                  if(obj.content.totalCount){
                     chat.questionType = 1
-                    event.data.data.noTab = true
+                    obj.content.noTab = true
                   } else {
                     chat.questionType = 2
                   }
@@ -1027,24 +1528,59 @@
                 chat.copyText = JSON.parse(event.data)
                 chatList.value.push(chat)
                 console.log('对话list：：：', chatList.value)
-              } else if (chat.showtype == 'text'){
-                if (event.data === '[DONE]') {
-                  console.info('结束')
-                  chat.content = marked(text.value)
-                  chat.copyText = text.value
-                  chatList.value.push(chat)
-                  text.value = ""
-                  n=2
-                  eventSource.close()
-                  likeLoading.value = false
-                } else {
-                    console.log('event.data,,,',event.data)
-                    text.value += event.data
-                    console.log('text.value,,,',text.value)
-                }
-              }
-            }
-            
+              } else if(obj.type == 'gpt'){
+                step.value = 2
+                console.log('obj',obj)
+              
+                // if (event.data.indexOf('<br><br>') != -1) {
+                //     event.data = event.data.replace('<br><br>', '\n\n')
+                // }
+                // if(event.data.indexOf('<br>') != -1){
+                //   event.data = event.data.replace('<br>','\n')
+                // }
+               
+                // if(obj.content == '[DONE]'){
+                //     console.info('结束')
+                //     loading.value = false
+                //     chat.copyText = text.value
+                //     chat.content = marked(text.value)
+                //     chatList.value.push(chat)
+                //     text.value = ''
+                //     htmlText.value = ''
+                //     step.value = 3
+                //     n=2
+                //     likeLoading.value = false
+                //     eventSource.close()
+                // }else{
+                  console.log('event.data,,,',objcontent)
+                  text.value += objcontent
+                  console.log('text.value,,,',text.value)
+                // }
+              } else if (obj.type == 'error'){
+                    console.info('error')
+                    if(obj.code == 6001){
+                      EventBus.$emit('goSubscribe')
+                    }
+                    loading.value = false
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    eventSource.close()
+              }  if(obj.content == '[DONE]'){
+                    console.info('结束')
+                    loading.value = false
+                    chat.showtype = 'gpt'
+                    chat.copyText = text.value
+                    chat.content = marked(text.value)
+                    chatList.value.push(chat)
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    likeLoading.value = false
+                    eventSource.close()
+                } 
           };
           eventSource.onerror = (error) => {
               console.error('EventSource failed:', error)
@@ -1094,6 +1630,7 @@
         stopText,
         htmlText,
         apiurl,
+        v1chatUrl,
         chatlist_index,
         likeHandle,
         showdislikeDialog,
@@ -1110,6 +1647,10 @@
         likeLoading,
         userModel,
         haveCount,
+        dateVal,
+        timeVal,
+        gender,
+        sendDateTime,
         // RelatedQuestions,
       } 
     },
@@ -1135,6 +1676,7 @@
       PlanetInHouse,
       PlanetInSign,
       DisLikeReason,
+      DateTimeSelect,
     },
     watch:{
       chatNum(val,old){
@@ -1171,12 +1713,18 @@
       },
       // 重新响应
       regenerateResponse(){
-        if(!this.haveCount){
-          EventBus.$emit('goSubscribe')
-          return
-        }
+        // if(!this.haveCount){
+        //   EventBus.$emit('goSubscribe')
+        //   return
+        // }
         const userList = this.chatList.filter( item => item.role == 'user' && !item.islike)
-        this.sendMessage(userList[userList.length - 1].content)
+        this.sendMessage(
+          {
+            question: userList[userList.length - 1].content,
+            base64String: userList[userList.length - 1].base64_content,
+            base64_type: userList[userList.length - 1].base64_type,
+          }
+        )
         const self = this
         setTimeout(() => {
             self.scrollToBottom() 
@@ -1286,6 +1834,7 @@
                           line-height: 16px;
                           font-family: Poppins-Regular, Poppins;
                           max-width: calc(100% - 1rem);
+                          cursor:default;
                       }
                   }
                   .record-content{
@@ -1302,6 +1851,12 @@
                         border-radius: .3rem .1rem  .3rem  .3rem;
                         color: #000000;
                         word-break: break-all;
+                        cursor:default;
+                        img{
+                          width: 100%;
+                          height: 100%;
+                          margin-bottom: 0.2rem;
+                        }
                       }
                   }
                  
@@ -1315,7 +1870,8 @@
                       position: relative;
                       color: #ffefdd;
                       line-height: 0.45rem;
-                      font-size:  0.259rem; ;
+                      font-size:  0.259rem;
+                      cursor:default;
                       // font-size: .24rem;
                       .zindex{
                           z-index: 1111;
@@ -1424,14 +1980,47 @@
               margin-top: .2rem;
               .inner{
                 max-width: 100%;
+                cursor:default;
               }
             }
           }
         }
       }
   }
+  .setList{
+        display: flex;
+        width: 240px;
+        margin: 0 auto;
+        justify-content: space-around;
+        .list{
+          display: flex;
+          align-items: center;
+          // margin-right: .2rem;
+          cursor: pointer;
+          font-size: 0.26rem;
+          font-family: Poppins-Regular, Poppins;
+          img{
+            margin-right: .05rem;
+            width: .5rem;
+          }
+        }
+        .xian{
+          background: #FFFFFF;
+          height: 20px;
+          opacity: 0.6;
+          width: 1px;
+        }
+        &.mb-setList{
+          width: 200px;
+        }
+      }
+  
   </style>
   <style>
+  .el-popper[data-popper-placement^=top] .el-popper__arrow::before {
+    background: #000000;
+}
+
   .three-bounce {
       text-align: left;
       display: flex;

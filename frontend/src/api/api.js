@@ -172,15 +172,7 @@ export const payAccount  = async (data) => {
   return await request({ method: 'get', url: '/api/pay/account' ,params: data});
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
+//  chat接口改造
+export const v1chat  = async (data) => {
+  return await request({ method: 'post', url: '/v1/chat' ,data: data});
+};

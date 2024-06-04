@@ -21,7 +21,7 @@
   />
 </template>
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useStore} from 'vuex'
 import { useRouter,useRoute } from 'vue-router'
 import Header from '/@/components/Header.vue'
@@ -49,7 +49,9 @@ export default {
       return route.name
     })
     const checkLoginHandle = async() => {
-      const res = await checkLogin()
+      const res = await checkLogin({
+        timestamp:new Date().getTime()
+      })
       if(res.code == 200){
         store.commit('setLoginStatus',true)
         store.commit('setAccount',res.data.account)
@@ -58,6 +60,11 @@ export default {
         store.commit('setLoginStatus',false)
       }
     }
+    watch(() => loginStatus.value, (newValue, oldValue) => {
+      // if (!newValue) {
+      //     store.commit("setUserModel", "3.5");
+      // }
+    })
     onMounted(() => {
       checkLoginHandle()
       window.onresize = () => {

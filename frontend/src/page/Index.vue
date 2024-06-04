@@ -1,27 +1,30 @@
 <template>
     <div class="index" :class="screenWidth<=900? 'mb-index' : ''">
-        <div class="constellation-box" v-if="(navQueryType.type=='cqsm')&& screenWidth>900">
+        <div class="constellation-box" v-if="(navQueryType.type=='cqsm' || navQueryType.type=='rgcs')&& screenWidth>900">
           <ul class="list" >
             <li v-if="navQueryType.type=='sxxz'" v-for="(item, index) in constellation" :key="index" @click="changeQuetype(item)" :class="item.type== sxxzType.type ? 'active' : ''">{{ item.name }}</li>
-            <li v-if="navQueryType.type=='cqsm'" v-for="(item, index) in cqsmSub" :key="index" @click="changeCQSMtype(item)" :class="item.type== cqsmType.type ? 'active' : ''">{{ item.name }}</li>
+            <li v-if="navQueryType.type=='cqsm'" v-for="(item, index) in cqsmSub" :key="index" @click="changeCQSMtype(item)" :class="item.type== cqsmType.type ? 'active' : ''">{{ $t(item.name) }}</li>
+            <li class="rgcs_li" v-if="navQueryType.type=='rgcs'" v-for="(item, index) in rgcsArr" :key="index" @click="changeRGCStype(item)" :class="item.type== rgcsType.type ? 'active' : ''">{{ $t(item.name) }}</li>
           </ul>
         </div>
-        <div class="mb-constellation-box" v-if="( navQueryType.type=='cqsm') && screenWidth<=900">
+        <div class="mb-constellation-box" v-if="( navQueryType.type=='cqsm' || navQueryType.type=='rgcs') && screenWidth<=900">
           <ul class="list" v-if="!moduletab_mb">
             <li v-if="navQueryType.type=='sxxz'"  v-for="(item1, index1) in constellation.slice(0, 3)" :key="index1"  @click="changeQuetype(item1)" :class="item1.type== sxxzType.type ? 'active' : ''">{{ item1.name }}</li>
-            <li v-if="navQueryType.type=='cqsm'"  v-for="(item1, index1) in cqsmSub.slice(0, 3)" :key="index1"  @click="changeCQSMtype(item1)" :class="item1.type== cqsmType.type ? 'active' : ''">{{ item1.name }}</li>
+            <li v-if="navQueryType.type=='cqsm'"  v-for="(item1, index1) in cqsmSub.slice(0, 3)" :key="index1"  @click="changeCQSMtype(item1)" :class="item1.type== cqsmType.type ? 'active' : ''">{{ $t(item1.name) }}</li>
+            <li v-if="navQueryType.type=='rgcs'" v-for="(item1, index1) in rgcsArr.slice(0, 3)" :key="index1" @click="changeRGCStype(item1)" :class="item1.type== rgcsType.type ? 'active' : ''">{{ $t(item1.name) }}</li>
             <li class="btn" @click="moduletab_mb = true">
-              <div>展开</div>
+              <div>{{ $t('expand') }}</div>
               <img src="/@/assets/images/caret-up-square.png" alt="">
             </li>
           </ul>
           <ul class="list" v-if="moduletab_mb">
             <li v-if="navQueryType.type=='sxxz'"  v-for="(item, index) in constellation" :key="index" @click="changeQuetype(item)" :class="item.type== sxxzType.type ? 'active' : ''">{{ item.name }}</li>
-            <li v-if="navQueryType.type=='cqsm'"  v-for="(item, index) in cqsmSub" :key="index" @click="changeCQSMtype(item)" :class="item.type== cqsmType.type ? 'active' : ''">{{ item.name }}</li>
-            <li class="nostyle">
+            <li v-if="navQueryType.type=='cqsm'"  v-for="(item, index) in cqsmSub" :key="index" @click="changeCQSMtype(item)" :class="item.type== cqsmType.type ? 'active' : ''">{{ $t(item.name)}}</li>
+            <li v-if="navQueryType.type=='rgcs'" v-for="(item, index) in rgcsArr" :key="index" @click="changeRGCStype(item)" :class="item.type== rgcsType.type ? 'active' : ''">{{ $t(item.name) }}</li>
+            <li v-if="navQueryType.type=='sxxz' || navQueryType.type=='cqsm'" class="nostyle">
             </li>
             <li class="btn"  @click="moduletab_mb = false">
-              <div>收起</div>
+              <div>{{ $t('collapse') }}</div>
               <img src="/@/assets/images/caret-down-square.png" alt="">
             </li>
           </ul>
@@ -36,7 +39,7 @@
                   <div  class="answer">
                     <div class="BotHeader">
                       <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                      <div v-if="screenWidth<=900">天机阁</div>
+                      <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                     </div>
                   
                     <div class="text-content">
@@ -71,7 +74,7 @@
                   </template> -->
                 <template v-if="chatList.length>0">
                   <template v-for="(item,index) in chatList" :key="index">
-                    <template v-if="(item.showtype  == 'text' || item.role == 'user') && item.submodel == sxxzType.submodel && !item.islike">
+                    <template v-if="(item.showtype  == 'text' || item.role == 'user' || item.showtype  == 'gpt') && item.submodel == sxxzType.submodel && !item.islike">
                       <div class="chat-list" :class="item.role == 'user' ? 'right-content' : ''">
                         <div v-if="item.role == 'user'" class="question" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
                           <div class="text-content" >
@@ -84,7 +87,7 @@
                         <div v-if="item.role == 'assistant'" class="answer" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
                           <div class="BotHeader">
                             <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                            <div v-if="screenWidth<=900">天机阁</div>
+                            <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                           </div>
                           <div class="text-content">
                               <div class="inner">
@@ -209,7 +212,7 @@
                   <div class="answer">
                       <div class="BotHeader">
                         <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                        <div v-if="screenWidth<=900">天机阁</div>
+                        <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                       </div>
                       <div class="text-content">
                           <div class="inner">
@@ -248,7 +251,7 @@
           </div>
         </template>
        
-        <div class="chatmaxbox" v-if="navQueryType.type=='cqsm'" :class="screenWidth<=900? !moduletab_mb ? 'mb' : 'mb_small' : ''">
+        <div class="chatmaxbox" v-if="navQueryType.type=='cqsm' || navQueryType.type=='rgcs'" :class="screenWidth<=900? !moduletab_mb ? 'mb' : 'mb_small' : ''">
           <div class="chat" ref="chatContent">
             <!-- v-if="sxxzType.type === 'xzys'" -->
               <!-- 文字对话 -->
@@ -257,12 +260,13 @@
                 <div  class="answer">
                   <div class="BotHeader">
                     <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                    <div v-if="screenWidth<=900">天机阁</div>
+                    <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                   </div>
                 
                   <div class="text-content">
                       <div class="inner">
-                        <div class="zindex">{{ cqsmType.defaultQue }}</div>
+                        <div class="zindex" v-if="navQueryType.type=='cqsm'">{{ $t(cqsmType.defaultQue) }}</div>
+                        <div class="zindex" v-if="navQueryType.type=='rgcs'">{{ $t(rgcsType.defaultQue) }}</div>
                         <div class="xiangyun"></div>
                       </div>
                   </div>
@@ -290,9 +294,9 @@
                 <!-- <template v-if="true">
                   <PlanetInSign />
                 </template> -->
-              <template v-if="chatList_cqsm.length>0">
+              <template v-if="chatList_cqsm.length>0 && navQueryType.type=='cqsm'">
                 <template v-for="(item,index) in chatList_cqsm" :key="index">
-                  <template v-if="(item.showtype  == 'text' || item.role == 'user') && item.submodel == cqsmType.submodel && !item.islike">
+                  <template v-if="(item.showtype  == 'text' || item.role == 'user' || item.showtype  == 'gpt') && item.submodel == cqsmType.submodel && !item.islike">
                     <div class="chat-list" :class="item.role == 'user' ? 'right-content' : ''">
                       <div class="select" v-if="selectStatus" @click="item.choose =!item.choose">
                           <img v-if="!item.choose" src="/@/assets/images/choose.png" alt="" srcset="">
@@ -300,7 +304,7 @@
                         </div>
                       <div v-if="item.role == 'user'" class="question" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
                         <div class="text-content">
-                          <el-popover
+                          <!-- <el-popover
                                 v-model:visible="item.sharePopover"
                                 placement="bottom"
                                 trigger="click"
@@ -312,14 +316,32 @@
                                   <img src="/@/assets/images/more.png" alt="">
                                 </template>
                                 <template #default>
-                                  <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                                  <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                                  <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
+                                  <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                                  <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                                  <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
                                 </template>
-                            </el-popover>
+                            </el-popover> -->
+                        <el-popover
+                          placement="top"
+                          effect="dark"
+                          :width="screenWidth> 900 ?260 : 220"
+                          popper-style="border-radius:0.2rem;background: #000000;padding: 10px;"
+                        >
+                          <template #reference>
                             <div class="inner">
                                 {{item.content}}
                             </div>
+                          </template>
+                          <template #default>
+                            <div class="setList" :class="screenWidth<= 900?'mb-setList':''">
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div class="xian"></div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="xian"></div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                            </div>  
+                          </template>
+                        </el-popover>
                         </div>
                         <img v-if="screenWidth>900" class="avatar" src="/@/assets/images/user.png" alt="">
                       </div>
@@ -327,9 +349,9 @@
                         <div class="BotHeader mb">
                           <div class="left">
                             <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                            <div v-if="screenWidth<=900">天机阁</div>
+                            <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                           </div>
-                          <el-popover
+                          <!-- <el-popover
                             v-model:visible="item.sharePopover"
                             placement="bottom"
                             trigger="click"
@@ -341,18 +363,36 @@
                               <img src="/@/assets/images/more.png" alt="">
                             </template>
                             <template #default>
-                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
                             </template>
-                          </el-popover>
+                          </el-popover> -->
                         </div>
                         <div class="text-content">
+                        <el-popover
+                          placement="top"
+                          effect="dark"
+                          :width="screenWidth> 900 ?260 : 220"
+                          popper-style="border-radius:0.2rem;background: #000000;padding: 10px;"
+                        >
+                          <template #reference>
                             <div class="inner">
                               <div class="zindex" v-html="item.content"></div>
                               <div class="xiangyun"></div>
                             </div>
-                            <el-popover
+                          </template>
+                          <template #default>
+                            <div class="setList" :class="screenWidth<= 900?'mb-setList':''">
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div class="xian"></div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="xian"></div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                            </div>
+                          </template>
+                        </el-popover>
+                            <!-- <el-popover
                                 v-model:visible="item.sharePopover"
                                 placement="bottom"
                                 trigger="click"
@@ -364,13 +404,33 @@
                                   <img src="/@/assets/images/more.png" alt="">
                                 </template>
                                 <template #default>
-                                  <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                                  <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                                  <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
+                                  <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                                  <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                                  <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
                                 </template>
-                            </el-popover>
+                            </el-popover> -->
                         </div>
                       </div>
+                  </div>
+                  <div class="chatBotton" v-if="index == chatlist_index && !loading && !selectStatus" :class="screenWidth<=900?'mb_chatBotton' : ''">
+                    <div class="share" @click="shareHandle(item)">
+                      <img src="/@/assets/images/share_yellow.svg" alt="" srcset="">
+                      {{ $t('share') }}
+                    </div>
+                    <div class="likediv" v-if="!item.likeType" @click="likeHandle(1,item)">
+                      <img src="/@/assets/images/like.svg" alt="" srcset="">
+                      {{ $t('like') }}
+                    </div>
+                    <div class="likediv" v-if="!item.likeType" @click="showdislikeDialog(item)">
+                      <img src="/@/assets/images/dislike.svg" alt="" srcset="">
+                      {{ $t('dislike') }}
+                    </div>
+                    <div class="chooseIsLike" v-if="item.likeType == 1">
+                      <img src="/@/assets/images/like2.svg" alt="" srcset="">
+                    </div>
+                    <div class="chooseIsLike" v-if="item.likeType == 2 || item.likeType == 3 || item.likeType == 4">
+                      <img src="/@/assets/images/dislike2.svg" alt="" srcset="">
+                    </div>
                   </div>
                   </template>     
                    <!-- <div class="chat-list right-content">
@@ -395,18 +455,143 @@
                   <template v-if="item.role == 'assistant' && item.showtype == 'tem' && item.submodel == cqsmType.submodel && !item.islike">
                     <chouqiansuanming :presetData="item.content"/>    
                   </template>
+                  <template v-if="item.showtype  =='dateTime' && item.role == 'assistant' && item.submodel == cqsmType.submodel && !item.islike ">
+                      <DateTimeSelect 
+                        @sendDateTime="sendDateTime"
+                      />
+                  </template>
+                </template>
+              </template>
+              <template v-if="chatList_rgcs.length>0 && navQueryType.type=='rgcs'">
+                <template v-for="(item,index) in chatList_rgcs" :key="index">
+                  <template v-if="(item.showtype  == 'text' || item.role == 'user' || item.showtype  == 'gpt') && item.submodel == rgcsType.submodel && !item.islike">
+                    <div class="chat-list" :class="item.role == 'user' ? 'right-content' : ''">
+                      <div class="select" v-if="selectStatus" @click="item.choose =!item.choose">
+                          <img v-if="!item.choose" src="/@/assets/images/choose.png" alt="" srcset="">
+                          <img v-if="item.choose" src="/@/assets/images/choose2.png" alt="">
+                        </div>
+                      <div v-if="item.role == 'user'" class="question" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
+                        <div class="text-content">
+                          <!-- <el-popover
+                                v-model:visible="item.sharePopover"
+                                placement="bottom"
+                                trigger="click"
+                                :show-arrow="false"
+                                popper-class="share-popover"
+                                v-if="item.funshow && !selectStatus"
+                            >
+                                <template #reference>
+                                  <img src="/@/assets/images/more.png" alt="">
+                                </template>
+                                <template #default>
+                                  <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                                  <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                                  <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                                </template>
+                            </el-popover> -->
+                        <el-popover
+                          placement="top"
+                          effect="dark"
+                          :width="screenWidth> 900 ?260 : 220"
+                          popper-style="border-radius:0.2rem;background: #000000;padding: 10px;"
+                        >
+                          <template #reference>
+                            <div class="inner">
+                                {{item.content}}
+                            </div>
+                          </template>
+                          <template #default>
+                            <div class="setList" :class="screenWidth<= 900?'mb-setList':''">
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div class="xian"></div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="xian"></div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                            </div>  
+                          </template>
+                        </el-popover>
+                        </div>
+                        <img v-if="screenWidth>900" class="avatar" src="/@/assets/images/user.png" alt="">
+                      </div>
+                      <div v-if="item.role == 'assistant'" class="answer" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
+                        <div class="BotHeader mb">
+                          <div class="left">
+                            <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
+                            <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
+                          </div>
+                          <!-- <el-popover
+                            v-model:visible="item.sharePopover"
+                            placement="bottom"
+                            trigger="click"
+                            :show-arrow="false"
+                            popper-class="share-popover"
+                            v-if="item.funshow && !selectStatus && screenWidth<=900"
+                          >
+                            <template #reference>
+                              <img src="/@/assets/images/more.png" alt="">
+                            </template>
+                            <template #default>
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                            </template>
+                          </el-popover> -->
+                        </div>
+                        <div class="text-content">
+                        <el-popover
+                          placement="top"
+                          effect="dark"
+                          :width="screenWidth> 900 ?260 : 220"
+                          popper-style="border-radius:0.2rem;background: #000000;padding: 10px;"
+                        >
+                          <template #reference>
+                            <div class="inner">
+                              <div class="zindex" v-html="item.content"></div>
+                              <div class="xiangyun"></div>
+                            </div>
+                          </template>
+                          <template #default>
+                            <div class="setList" :class="screenWidth<= 900?'mb-setList':''">
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div class="xian"></div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="xian"></div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                            </div>
+                          </template>
+                        </el-popover>
+                            <!-- <el-popover
+                                v-model:visible="item.sharePopover"
+                                placement="bottom"
+                                trigger="click"
+                                :show-arrow="false"
+                                popper-class="share-popover"
+                                v-if="item.funshow && !selectStatus && screenWidth>900"
+                            >
+                                <template #reference>
+                                  <img src="/@/assets/images/more.png" alt="">
+                                </template>
+                                <template #default>
+                                  <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                                  <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                                  <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                                </template>
+                            </el-popover> -->
+                        </div>
+                      </div>
+                  </div>
                   <div class="chatBotton" v-if="index == chatlist_index && !loading && !selectStatus" :class="screenWidth<=900?'mb_chatBotton' : ''">
                     <div class="share" @click="shareHandle(item)">
                       <img src="/@/assets/images/share_yellow.svg" alt="" srcset="">
-                      分享
+                      {{ $t('share') }}
                     </div>
                     <div class="likediv" v-if="!item.likeType" @click="likeHandle(1,item)">
                       <img src="/@/assets/images/like.svg" alt="" srcset="">
-                      喜欢
+                      {{ $t('like') }}
                     </div>
                     <div class="likediv" v-if="!item.likeType" @click="showdislikeDialog(item)">
                       <img src="/@/assets/images/dislike.svg" alt="" srcset="">
-                      不喜欢
+                      {{ $t('dislike') }}
                     </div>
                     <div class="chooseIsLike" v-if="item.likeType == 1">
                       <img src="/@/assets/images/like2.svg" alt="" srcset="">
@@ -415,13 +600,19 @@
                       <img src="/@/assets/images/dislike2.svg" alt="" srcset="">
                     </div>
                   </div>
+                  </template>     
+                  <template v-if="item.showtype  =='dateTime' && item.role == 'assistant' && item.submodel == rgcsType.submodel && !item.islike ">
+                      <DateTimeSelect 
+                        @sendDateTime="sendDateTime"
+                      />
+                  </template>
                 </template>
               </template>
-            <div class="chat-list"  v-if="loading && loadingmodel == cqsmType.submodel">  <!-- v-if="loading" -->
+            <div class="chat-list"  v-if="loading && (loadingmodel == cqsmType.submodel || loadingmodel == rgcsType.submodel)">  <!-- v-if="loading" -->
                 <div class="answer">
                     <div class="BotHeader">
                       <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                      <div v-if="screenWidth<=900">天机阁</div>
+                      <div v-if="screenWidth<=900"> {{ $t('starloom') }}</div>
                     </div>
                     <div class="text-content">
                         <div class="inner">
@@ -460,16 +651,19 @@
           </div>
         </div>
         <div class="chatmaxbox-other" v-if="navQueryType.type=='scbz' || 
-          navQueryType.type=='sxxz' || 
-          navQueryType.type =='zybg'||
+          navQueryType.type == 'sxxz' || 
+          navQueryType.type == 'zybg' ||
           navQueryType.type == 'tlp' ||
-          navQueryType.type=='qmcm' || 
-          navQueryType.type=='hypd' || 
+          navQueryType.type == 'qmcm' || 
+          navQueryType.type == 'hypd' || 
           navQueryType.type == 'gsqm' || 
           navQueryType.type == 'zgjm' ||
           navQueryType.type == 'fsbj' || 
+          navQueryType.type == 'sxjm' || 
           navQueryType.type == 'hdnj' ||
           navQueryType.type == 'hljr' ||
+          navQueryType.type == 'zwds' ||
+          navQueryType.type == 'smsz' || 
           navQueryType.type == 'hmxj'">
           <div class="chat" ref="chatContent">
             <!-- v-if="sxxzType.type === 'xzys'" -->
@@ -479,11 +673,117 @@
                 <div  class="answer">
                   <div class="BotHeader">
                     <img class="avatar"  :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                    <div v-if="screenWidth<=900">天机阁</div>
+                    <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                   </div>
                   <div class="text-content">
                       <div class="inner">
-                        <div class="zindex"> {{ navQueryType.defQuestion }} </div>
+                        <div class="zindex"> 
+                          {{ $t(navQueryType.defQuestion) }} 
+                          <div class="dateTimeMaxDiv"
+                           v-if="navQueryType.type=='scbz' || 
+                            navQueryType.type=='sxxz' ||
+                            navQueryType.type=='hypd'" 
+                          >
+                          <div class="flexDiv" v-if="navQueryType.type=='hypd'"  :class="screenWidth<=550? 'flexWrap':''">
+                                <div class="nameBox" v-if="navQueryType.type=='hypd'">
+                                  <div :class="lang=='en'?'textdiv':''"> {{ $t('femaleName')  }}：</div>
+                                  <div class="inputDiv" :class="screenWidth<=550? 'width100':''" >
+                                    <input v-model="femaleName" type="text" class="nameInput" :placeholder="$t('pleaseEnterfemaleName')">
+                                  </div>
+                                </div>
+                                <div class="birthBox" >
+                                  <div :class="lang=='en'? 'dateTextDiv':''"> {{  $t('femaleGregorianBirthdate') }}：</div>
+                                  <div class="dateTimeDiv">
+                                    <div class="datePicker">
+                                      <el-config-provider :locale="locale">
+                                        <el-date-picker
+                                          v-model="dateVal2"
+                                          type="date"
+                                          :placeholder="$t('selectDate')"
+                                          :size="small"
+                                          prefix-icon=""
+                                          value-format="YYYY-MM-DD"
+                                          :disabled-date="disabledDate"
+                                        />
+                                      </el-config-provider>
+                                    </div>
+                                    <div class="timePicker">
+                                      <el-config-provider :locale="locale">
+                                        <el-time-picker 
+                                          v-model="timeVal2" 
+                                          :placeholder="$t('selectTime')"
+                                          format="HH:mm"
+                                          value-format="HH-mm"
+                                        />
+                                      </el-config-provider>
+                                        <!--  -->
+                                    </div>
+                                  </div>
+                                </div>
+                          </div>  
+                          <div class="bottomDiv">
+                            <div class="flexDiv" :class="screenWidth<=550? 'flexWrap':''">
+                                <div class="nameBox" v-if="navQueryType.type=='hypd'">
+                                  <div :class="lang=='en'?'textdiv':''"> {{ $t('maleName')  }}：</div>
+                                  <div class="inputDiv" :class="screenWidth<=550? 'width100':''">
+                                    <input v-model="maleName" type="text" class="nameInput" :placeholder="$t('pleaseEnterMaleName')" >
+                                  </div>
+                                </div>
+                                <div class="birthBox">
+                                  <div :class="navQueryType.type=='hypd' && lang=='en'? 'dateTextDiv':''" > {{ navQueryType.type=='hypd' ? $t('maleGregorianBirthdate') : $t('gregorianBirthdate')}}：</div>
+                                  <div class="dateTimeDiv">
+                                    <div class="datePicker">
+                                      <el-config-provider :locale="locale">
+                                        <el-date-picker
+                                          v-model="dateVal"
+                                          type="date"
+                                          :placeholder="$t('selectDate')"
+                                          :size="small"
+                                          prefix-icon=""
+                                          value-format="YYYY-MM-DD"
+                                          :disabled-date="disabledDate"
+                                        />
+                                      </el-config-provider>
+                                    </div>
+                                    <div class="timePicker">
+                                      <el-config-provider :locale="locale">
+                                        <el-time-picker 
+                                          v-model="timeVal" 
+                                          :placeholder="$t('selectTime')"
+                                          format="HH:mm"
+                                          value-format="HH-mm"
+                                        />
+                                      </el-config-provider>
+                                        <!--  -->
+                                    </div>
+                                  </div>
+                                </div>
+
+                            </div>
+
+                            <div class="genderDiv" v-if="navQueryType.type!='hypd'">
+                                {{ $t('gender') }}：
+                                <div class="malebox" @click="chooseGender('male')">
+                                  <div class="wai">
+                                    <div class="nei" :class="gender=='male'?'active':''"></div>
+                                  </div>
+                                  {{ $t('male') }}
+                                </div>
+                                <div class="femalebox" @click="chooseGender('female')">
+                                  <div class="wai">
+                                    <div class="nei" :class="gender=='female'?'active':''"></div>
+                                  </div>
+                                  {{ $t('female') }}
+                                </div>
+                              </div>
+                              <div class="okBtn" @click="sendDateTime()">
+                                {{ $t('sure') }}
+                              </div>
+                          </div>
+
+
+                          </div>
+                        </div>
                         <div class="xiangyun"></div>
                       </div>
                   </div>
@@ -491,104 +791,149 @@
               </div>
               <template v-if="chatList_scbz.length>0">
                 <template v-for="(item,index) in chatList_scbz" :key="index">
-                  <template v-if="(item.showtype  == 'text' || item.role == 'user') && item.submodel == navQueryType.module && !item.islike">
+                  <template v-if="(item.showtype  == 'text' || item.role == 'user' || item.showtype  == 'gpt') && item.submodel == navQueryType.module && !item.islike">
                     <div class="chat-list" :class="item.role == 'user' ? 'right-content' : ''">
                       <div class="select" v-if="selectStatus" @click="item.choose =!item.choose">
                           <img v-if="!item.choose" src="/@/assets/images/choose.png" alt="" srcset="">
                           <img v-if="item.choose" src="/@/assets/images/choose2.png" alt="">
                         </div>
+                 
+                   
                       <div v-if="item.role == 'user'" class="question" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
                        
-                        <div class="text-content">
-                          <el-popover
-                                v-model:visible="item.sharePopover"
-                                placement="bottom"
-                                trigger="click"
-                                :show-arrow="false"
-                                popper-class="share-popover"
-                                v-if="item.funshow && !selectStatus"
-                            >
-                                <template #reference>
-                                  <img src="/@/assets/images/more.png" alt="">
-                                </template>
-                                <template #default>
-                                  <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                                  <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                                  <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
-                                </template>
-                            </el-popover>
-                          
-                            <div class="inner">
-                              {{ item.content }}
-                            </div>
-                            
-                        </div>
-                        <img v-if="screenWidth>900" class="avatar" src="/@/assets/images/user.png" alt="">
-                      </div>
-                      <div v-if="item.role == 'assistant'" class="answer" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
-                        <div class="BotHeader mb">
-                          <div class="left">
-                            <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                            <div v-if="screenWidth<=900">天机阁</div>
-                          </div>
-                          <el-popover
-                            v-model:visible="item.sharePopover"
-                            placement="bottom"
+                       <div class="text-content">
+                         <!-- <el-popover
+                               v-model:visible="item.sharePopover"
+                               placement="bottom"
+                               trigger="click"
+                               :show-arrow="false"
+                               popper-class="share-popover"
+                               v-if="item.funshow && !selectStatus"
+                           > -->
+                               <!-- <template #reference>
+                                 <img src="/@/assets/images/more.png" alt="">
+                               </template> -->
+                               <!-- <template #default>
+                                 <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                                 <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                                 <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                               </template> -->
+                           <!-- </el-popover> -->
+                           <!-- <div v-if="item.funshow">
+                               <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                               <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                               <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                           </div> -->
+                           <el-popover
+                           placement="top"
+                            effect="dark"
                             trigger="click"
-                            :show-arrow="false"
-                            popper-class="share-popover"
-                            v-if="item.funshow && !selectStatus && screenWidth<=900"
-                          >
+                            :width="screenWidth> 900 ?260 : 220"
+                            popper-style="border-radius:0.2rem;background: #000000;padding: 10px;"
+                           >
                             <template #reference>
-                              <img src="/@/assets/images/more.png" alt="">
+                              <div class="inner">
+                                <div v-if="item.base64_type == 1 && item.base64_content">
+                                  <!-- {{}} -->
+                                  <img :src="item.base64_content" alt="">
+                                </div>
+                                {{ item.content }}
+                              </div>
                             </template>
-                            <template #default>
-                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
-                            </template>
-                          </el-popover>
-                        </div>
-                        <div class="text-content">
-                            <div class="inner">
-                              <div class="zindex" v-html="item.content"></div>
-                              <div class="xiangyun"></div>
+                          <template #default>
+                            <div class="setList" :class="screenWidth<= 900?'mb-setList':''">
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div class="xian"></div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="xian"></div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                            </div>  
+                          </template>
+                        </el-popover>  
+                           
+                       </div>
+                       <img v-if="screenWidth>900" class="avatar" src="/@/assets/images/user.png" alt="">
+                     </div>
+                     <div v-if="item.role == 'assistant'" class="answer" @mouseover="onHover(item)" @:mouseleave="onMouseLeave(item)">
+                       <div class="BotHeader mb">
+                         <div class="left">
+                           <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
+                           <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
+                         </div>
+                         <!-- <el-popover
+                           v-model:visible="item.sharePopover"
+                           placement="bottom"
+                           trigger="click"
+                           :show-arrow="false"
+                           popper-class="share-popover"
+                           v-if="item.funshow && !selectStatus && screenWidth<=900"
+                         >
+                           <template #reference>
+                             <img src="/@/assets/images/more.png" alt="">
+                           </template>
+                           <template #default>
+                             <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                             <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                             <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                           </template>
+                         </el-popover> -->
+                       </div>
+                       <div class="text-content">
+                        <el-popover
+                          placement="top"
+                          effect="dark"
+                          :width="screenWidth> 900 ?260 : 220"
+                          popper-style="border-radius:0.2rem;background: #000000;padding: 10px;"
+                        >
+                          <template #reference>
+                           <div class="inner">
+                             <div class="zindex" v-html="item.content"></div>
+                             <div class="xiangyun"></div>
+                           </div>
+                          </template>
+                          <template #default>
+                            <div class="setList" :class="screenWidth<= 900?'mb-setList':''">
+                              <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                              <div class="xian"></div>
+                              <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                              <div class="xian"></div>
+                              <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
                             </div>
-                            <el-popover
-                                v-model:visible="item.sharePopover"
-                                placement="bottom"
-                                trigger="click"
-                                :show-arrow="false"
-                                popper-class="share-popover"
-                                v-if="item.funshow && !selectStatus  && screenWidth>900"
-                            >
-                                <template #reference>
-                                  <img src="/@/assets/images/more.png" alt="">
-                                </template>
-                                <template #default>
-                                  <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">复制</div>
-                                  <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">分享</div>
-                                  <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">删除</div>
-                                </template>
-                            </el-popover>
-                          
-                        </div>
-                      </div>
-                     
+                          </template>
+                        </el-popover>  
+                           <!-- <el-popover
+                               v-model:visible="item.sharePopover"
+                               placement="bottom"
+                               trigger="click"
+                               :show-arrow="false"
+                               popper-class="share-popover"
+                               v-if="item.funshow && !selectStatus  && screenWidth>900"
+                           >
+                               <template #reference>
+                                 <img src="/@/assets/images/more.png" alt="">
+                               </template>
+                               <template #default>
+                                 <div class="list" v-if="item.showtype !='tem'" @click="copyHandle(item)"><img src="/@/assets/images/copy.png" alt="" srcset="">{{ $t('copy') }}</div>
+                                 <div  class="list" @click="shareHandle(item)"><img src="/@/assets/images/share.png" alt="" srcset="">{{ $t('share') }}</div>
+                                 <div class="list" @click="deleteHandle(item)"><img src="/@/assets/images/deletechat.png" alt="" srcset="">{{ $t('delete') }}</div>
+                               </template>
+                           </el-popover> -->
+                         
+                       </div>
+                     </div>
                   </div>
-                  </template>
                   <div class="chatBotton" v-if="index == chatlist_index && !loading && !selectStatus" :class="screenWidth<=900?'mb_chatBotton' : ''">
                     <div class="share" @click="shareHandle(item)">
                       <img src="/@/assets/images/share_yellow.svg" alt="" srcset="">
-                      分享
+                      {{ $t('share') }}
                     </div>
                     <div class="likediv" v-if="!item.likeType" @click="likeHandle(1,item)">
                       <img src="/@/assets/images/like.svg" alt="" srcset="">
-                      喜欢
+                      {{ $t('like') }}
                     </div>
                     <div class="likediv" v-if="!item.likeType" @click="showdislikeDialog(item)">
                       <img src="/@/assets/images/dislike.svg" alt="" srcset="">
-                      不喜欢
+                      {{ $t('dislike') }}
                     </div>
                     <div class="chooseIsLike" v-if="item.likeType == 1">
                       <img src="/@/assets/images/like2.svg" alt="" srcset="">
@@ -597,13 +942,20 @@
                       <img src="/@/assets/images/dislike2.svg" alt="" srcset="">
                     </div>
                   </div>
+                  </template>
+                 
+                  <template v-if="item.showtype  =='dateTime' && item.role == 'assistant' && item.submodel == navQueryType.module && !item.islike ">
+                      <DateTimeSelect 
+                        @sendDateTime="sendDateTime"
+                      />
+                  </template>
                 </template>
               </template>
             <div class="chat-list"  v-if="loading && loadingmodel == navQueryType.module">  <!-- v-if="loading" -->
                 <div class="answer">
                     <div class="BotHeader">
                       <img class="avatar" :class="screenWidth<=900 ? 'mbImg' : ''" src="/@/assets/images/aibot.png" alt="">
-                      <div v-if="screenWidth<=900">天机阁</div>
+                      <div v-if="screenWidth<=900">{{ $t('starloom') }}</div>
                     </div>
                     <div class="text-content">
                         <div class="inner">
@@ -662,9 +1014,11 @@ import AstrologicalChart from '/@/components/AstrologicalChart.vue'
 import AstrologicalHouseChart from '/@/components/AstrologicalHouseChart.vue'
 import PlanetInHouse from '/@/components/PlanetInHouse.vue'
 import PlanetInSign from '/@/components/PlanetInSign.vue'
+import DateTimeSelect from '/@/components/ChatComponent/DateTimeSelect.vue'
 
 import { SuccessFilled } from '@element-plus/icons-vue'
 import { ref, computed, watch, markRaw } from 'vue';
+import { useI18n } from 'vue-i18n'
 import { useStore} from 'vuex'
 import { GPTChat, xingzuoYunshi, shengxiaoYunshi, shengxiaoQuery, xingzuoChaxun, xingzuoShengrishu,
    xingzuoShengrimima, xingzuoShengrihua, xingzuoRankingList, xingzuoRankingGet, xingzuoRankingQuestion,
@@ -673,6 +1027,9 @@ import EventBus from '/@/utils/EventBus.js'
 import objKeySort from '/@/utils/hexmd5.js'
 import useClipboard from 'vue-clipboard3'
 import { MD5 } from 'crypto-js';
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import EN from 'element-plus/dist/locale/en.mjs'
+
 // import  from 'js-md5';
 import { marked } from 'marked'
 const url_pro = 'https://starloom.mpcbot.ai/chat';
@@ -681,10 +1038,13 @@ const url_test = 'https://testastroai.mpcbot.ai/chat';
 export default {
   name: '',
   setup() {
+    const { t } = useI18n();
     const chatList = ref([])
     const chatList_cqsm = ref([])
+    const chatList_rgcs = ref([])
     const chatList_scbz = ref([])
     const loading = ref(false) //加载状态
+    const gptAudioLoading = computed(() => store.state.gptAudioLoading) //等待语音返回 gpt思考
     const loadingmodel = ref('') //加载显示的模块
     const chatType = ref('') // 接口返回的 对话类型
     const step =  ref('1') //加载过程中的状态， 1 代表正在跟后台请求中， 2 代表 正在显示文字中 3 代表文字显示完毕或者用户中断回答
@@ -694,7 +1054,8 @@ export default {
     const rankPage = ref(1)
     const modelChatList = ref([])
     const sxxzType = ref({type:'xzys', submodel:'a-5', name:'星座运势', defaultQue:'您好，请输入您的星座，获取您的星座运势。例如：狮子座。'})
-    const cqsmType = ref({type:'gylq', submodel:'k-1', name:'观音灵签', defaultQue:'亲爱的众生，欢迎来到观音灵签的神圣空间。在此，我们先与救苦救难的观音菩萨建立心灵的连接。请您合十，默念三遍[救苦救难观音菩萨]，然后默念您的姓名、出生时辰、年龄与地址。请心中默念您的请求，无论是关于婚姻、事业还是财运。当您准备好后，请告诉我开始抽签，我们将一同寻找观音菩萨为您指点的答案。'})
+    const cqsmType = ref({type:'gylq', submodel:'k-1', name:'guanyinOracle', defaultQue:'gylq_openremarks'}) // 亲爱的众生，欢迎来到观音灵签的神圣空间。在此，我们先与救苦救难的观音菩萨建立心灵的连接。请您合十，默念三遍[救苦救难观音菩萨]，然后默念您的姓名、出生时辰、年龄与地址。请心中默念您的请求，无论是关于婚姻、事业还是财运。当您准备好后，请告诉我开始抽签，我们将一同寻找观音菩萨为您指点的答案。
+    const rgcsType = ref({type:'jxrg', submodel:'o-1', name:'jxrg', defaultQue:'jxrg_openremarks'})
     const time = ref(new Date().getTime() + localStorage.getItem('userId'))
     const store = useStore()
     const text = ref('')
@@ -703,20 +1064,45 @@ export default {
     const selectStatus = computed(() => store.state.selectStatus)
     const selectType = computed(() => store.state.selectType)
     const apiurl = computed(() => store.state.apiurl)
+    const v1chatUrl = computed(() => store.state.v1chatUrl)
     const userModel = computed(() => store.state.userModel)
     // const likeType = ref('')   // 是否喜欢类型  1喜欢 2不准确 3无益 4攻击性
     const sharelink = computed(() => store.state.sharelink)//分享链接 
     const haveCount =computed( () => store.state.haveCount) // 是否有条数
+    const lang = computed(() => store.state.lang)
+    const receiveType = computed(() => store.state.receiveType)
     const list_current = ref('')
     const likeItemObj = ref('')
     const likeLoading = ref(false)
-
+    const dateVal = ref('')
+    const timeVal = ref('')
+    const dateVal2 = ref('')
+    const timeVal2 = ref('')
+    const maleName = ref('')
+    const femaleName = ref('')
+    const gender = ref('male')  // 性别
+    const locale = computed(()=>{
+      if(lang.value=='en'){
+        return EN
+      }else{
+        return zhCn
+      }
+    })
+    
     const chatlist_index = computed(() => {   //当前模块list
       if(navQueryType.value.type=='cqsm'){
         list_current.value = chatList_cqsm.value.filter(item =>item.submodel == cqsmType.value.submodel && item.role == 'assistant' && !item.islike  )
         const leng = list_current.value.length-1
         for(var i=0;i<chatList_cqsm.value.length;i++){
           if(chatList_cqsm.value[i]== list_current.value[leng]){
+              return i
+          }
+        } 
+      }if(navQueryType.value.type=='rgcs'){
+        list_current.value = chatList_rgcs.value.filter(item =>item.submodel == rgcsType.value.submodel && item.role == 'assistant' && !item.islike  )
+        const leng = list_current.value.length-1
+        for(var i=0;i<chatList_rgcs.value.length;i++){
+          if(chatList_rgcs.value[i]== list_current.value[leng]){
               return i
           }
         } 
@@ -747,6 +1133,8 @@ export default {
     const navQueryType = computed(() => store.state.navQueryType)
     //监听导航tab模块
     watch(() => navQueryType.value,(val,old) => {
+      dateVal.value = ''
+      timeVal.value = ''
       if(old){
           if(loading.value){
             loading.value = false
@@ -755,11 +1143,12 @@ export default {
                 role: 'assistant',
                 copyText: text.value,
                 content: marked(text.value),
-                showtype: 'text',
+                showtype: 'gpt',
                 submodel: resObj.value.modelType,  //a-1
                 msggroup:time.value,
-                msgId: resObj.value.msgIds[1],
+                msgId: resObj.value.msg_answer_id,
                 islike: false,
+                base64_type: 0,
               }
               text.value = ''
               htmlText.value = ''
@@ -773,28 +1162,6 @@ export default {
             }
           }
         }
-        // if(old){
-        //   if(loading.value){
-        //     loading.value = false
-        //     eventSource.close()
-        //     const chat = {
-        //         role: 'assistant',
-        //         copyText: text.value,
-        //         content: marked(text.value),
-        //         showtype: 'text',
-        //         submodel: resObj.value.modelType,  //a-1
-        //         msggroup:time.value,
-        //       }
-        //       text.value = ''
-        //     if(old.type=='sxxz'){
-        //       chatList.value.push(chat)
-        //     }else if(old.type == 'cqsm'){
-        //       chatList_cqsm.value.push(chat)
-        //     }else{
-        //       chatList_scbz.value.push(chat)
-        //     }
-        //   }
-        // }
         if(val){
           const list = chatList_scbz.value.filter(item => item.submodel == val.module && item.msggroup)
           if(list.length>0){
@@ -806,56 +1173,555 @@ export default {
           }
         }
     })
-    const sendMessage = async (questionText, tabIndex, index) => {
+    
+    const sendMessage = async (requestObj, reqType, temReqObj, tabIndex, index) => {
+        let questionText = requestObj.question
+        let fileBase64String = requestObj.base64String
+        let baseType = requestObj.base64_type
+        let isSubmodule
         console.log('问题内容：：：', questionText)
-        if(loading.value || questionText == ''){
-                return
-        } 
-          //  || navQueryType.value.type == 'sxxz'
-        if(navQueryType.value.type == 'cqsm'){
-          if(!tabIndex && tabIndex !=0 ){
+        if(loading.value) return
+        if(navQueryType.value.type == 'fsbj' || navQueryType.value.type == 'sxjm'){
+          if(baseType == 1){
+            if(questionText == '' && fileBase64String == ''){
+                  return
+            } 
+          } 
+          else if(baseType == 2){
+            if(fileBase64String == ''){
+                  return
+            } 
+          } 
+          else {
+            if(questionText == '' ){
+                  return
+            } 
+          }  
+        }else{
+          if(baseType == 1){
+            if(questionText == '' && fileBase64String == ''){
+                  return
+            } 
+          } 
+          else if(baseType == 2){
+            if(fileBase64String == ''){
+                  return
+            } 
+          } 
+          else {
+            if(questionText == '' ){
+                  return
+            } 
+          }  
+        }
+        if(reqType == 'DateTime'){ 
+          const dateObj = temReqObj
+          if(dateObj){
+            dateVal.value = dateObj.date
+            timeVal.value = dateObj.time
+            gender.value = dateObj.sex
+            dateVal2.value = dateObj.dateVal2
+            timeVal2.value = dateObj.timeVal2
+            maleName.value = dateObj.maleName
+            femaleName.value = dateObj.femaleName
+          }
+          if(navQueryType.value.type == 'hypd'){
+            if(!femaleName.value ){
+              ElMessage({
+                  message: t('pleaseEnterfemaleName'),
+                  type: 'error',
+                })
+                return  
+            }
+            if(!dateVal2.value ){
+              ElMessage({
+                  message: t('pleaseSelectDate'),
+                  type: 'error',
+                })
+                return  
+            }
+            if(!timeVal2.value ){
+              ElMessage({
+                  message: t('pleaseSelectTime'),
+                  type: 'error',
+                })
+                return  
+            }
+            if(!maleName.value ){
+              ElMessage({
+                  message: t('pleaseEnterMaleName'),
+                  type: 'error',
+                })
+                return  
+            }
+          }
+          if(!dateVal.value ){
+            ElMessage({
+                message: t('pleaseSelectDate'),
+                type: 'error',
+              })
+              return  
+          }
+          if(!timeVal.value ){
+            ElMessage({
+                message: t('pleaseSelectTime'),
+                type: 'error',
+              })
+              return  
+          }
+        } else if(reqType == 'likeFun'){
+          const _liketype = temReqObj.likeType
+          if(_liketype){
+            if(_liketype == 1){ // 喜欢
+              questionText = t('likeChat')
+            } else if(_liketype == 2){  //不准确
+              questionText = t('inaccurateChat')
+            } else if(_liketype == 3){ //无益
+              questionText = t('unhelpfulChat')
+            } else if(_liketype == 4){ //攻击性
+              questionText = t('offensiveChat')
+            }
+          } 
+        }
+        const submodel_current = navQueryType.value.type == 'sxxz'?sxxzType.value.submodel:navQueryType.value.type == 'cqsm'?cqsmType.value.submodel:rgcsType.value.submodel
+        const chatList_current = navQueryType.value.type == 'sxxz'?chatList:navQueryType.value.type == 'cqsm'?chatList_cqsm:chatList_rgcs
+        const module_current = navQueryType.value.type == 'sxxz'?'a':navQueryType.value.type == 'cqsm'?'k':'o'
+        const user_receive_type = requestObj.base64_type == 2 ? receiveType.value == 'audio'? 2 : 1 : 1// 用户需要返回类型：1-纯文本；2-语音和文本 
+        if(navQueryType.value.type == 'cqsm' || navQueryType.value.type == 'rgcs'){
+          isSubmodule = true
+        }else{
+          isSubmodule = false
+        }
+        //  || navQueryType.value.type == 'sxxz'
+        // if(navQueryType.value.type == 'cqsm' || navQueryType.value.type == 'rgcs'){
+        //   let chat
+        //   if(!tabIndex && tabIndex !=0 ){
+        //     chat = {
+        //       role: 'user',
+        //       content:questionText,
+        //       copyText:questionText,
+        //       showtype:'text',
+        //       submodel: submodel_current,
+        //       msggroup: time.value,
+        //       islike: false,
+        //       base64_type: requestObj.base64_type ? requestObj.base64_type : 0, //  ? requestObj.base64_content.split("base64,")[1] : 0, // 文件的base64编码,
+        //       base64_content:requestObj.base64_type == 1 ? fileBase64String : requestObj.base64_type == 2 ? fileBase64String.split("base64,")[1] : '',
+        //       user_receive_type: user_receive_type,
+        //     }
+        //     if(requestObj.base64_type !=2 ){
+        //       // chatList.value.push(chat)
+        //       if(navQueryType.value.type == 'cqsm'){
+        //         chatList_cqsm.value.push(chat)
+        //       }else if(navQueryType.value.type == 'rgcs'){
+        //         chatList_rgcs.value.push(chat)
+        //       }
+        //     }
+            
+        //     loading.value = true
+        //     // likeType.value = ""
+        //     loadingmodel.value = submodel_current
+        //     step.value = 1
+        //   }
+        //   if(requestObj.base64_type ==2 ){
+        //       store.commit('setGptAudioLoading', true)
+        //   }
+        //   setTimeout(() => {
+        //       scrollToBottom() 
+        //       store.commit('setQuestion', '')
+        //   },50)
+        //   let userQueList = []
+        //   const model1 = submodel_current
+        //   const chat1 = chatList_current
+        //   chat1.value.forEach(item =>  {
+        //     if(item.submodel == model1){
+        //         userQueList.push({ 
+        //           "type": item.role == 'user'? 'user' : item.showtype,
+        //           "content": item.content,
+        //           "msgId": item.msgId? item.msgId:'',
+        //           "base64_type": item.base64_type,  // base64类型，0-无内容；1-图片；2-声音
+        //           "base64_content": '',
+        //           "file_type":item.base64_type==2 ? "mp3" : '', // 文件的类型
+        //           "user_receive_type": item.user_receive_type,// 用户需要返回类型：1-纯文本；2-语音和文本 
+        //         })
+        //     }
+        //   })
+        //   if(requestObj.base64_type ==2 ){
+        //       userQueList.push({
+        //         "type":'user',
+        //         "content": '',
+        //         "msgId": time.value,
+        //         "base64_type": chat.base64_type,  // base64类型，0-无内容；1-图片；2-声音
+        //         "base64_content": chat.base64_content,
+        //         "file_type":chat.base64_type==2 ? "mp3" : '', // 文件的类型
+        //         "user_receive_type": chat.user_receive_type,// 用户需要返回类型：1-纯文本；2-语音和文本 
+        //       })
+        //     }
+        //   const requestData =  {
+        //         "module":module_current,
+        //         "sub_module":submodel_current,
+        //         "messages":userQueList,
+        //         "msggroup": time.value,
+        //         "gpt_mode": userModel.value == '3.5'? 1 : 2,
+        //         islike:false,
+        //       }
+        //   try{
+
+        //     eventSource = new SSE(v1chatUrl.value, {
+        //       headers: {
+        //         'Content-Type': 'application/json', 
+        //         'Authorization': localStorage.getItem('starloomAI-token'),
+        //       },
+        //       payload: JSON.stringify(requestData),
+        //       method: "POST"
+        //     });
+        //     console.info(eventSource)
+        //     eventSource.onopen = () => {
+        //         console.log('open')
+        //     }
+        //     let chat
+        //     eventSource.onmessage = function(event) {
+        //       // 第一次返回： text|tem
+        //     // 如果 是tem ，第二次返回整个json字符串；如果是text，第二次，到第N次按照流输出一个字一个字的，遇到[DONE]结束
+        //       console.log('1111,',event.data)
+        //       const obj = JSON.parse(event.data)
+        //       const objcontent = obj.content
+        //       chat = {
+        //           role: 'assistant',
+        //           // content:result.data.data,
+        //           showtype: obj.type,
+        //           submodel: obj.modelType,  //a-1
+        //           msggroup:time.value,
+        //           msgId: obj.msg_answer_id,
+        //           islike: obj.islike,
+        //           base64_type: 0,
+        //         }
+        //       resObj.value = JSON.parse(event.data)
+        //       if(requestObj.base64_type !=2 ){
+        //         if(navQueryType.value.type == 'cqsm'){
+        //           const lengthnum = chatList_cqsm.value.length
+        //           chatList_cqsm.value[lengthnum-1].msgId = obj.msg_question_id
+        //         }else if(navQueryType.value.type == 'rgcs'){
+        //           const lengthnum = chatList_rgcs.value.length
+        //           chatList_rgcs.value[lengthnum-1].msgId = obj.msg_question_id
+        //         }       
+        //       }    
+        //       console.log('obj,',obj)
+        //       if(obj.type == 'tem'){ 
+        //         eventSource.close()
+        //         if(sxxzType.value.submodel == 'a-7'){
+        //           if(obj.content.totalCount){
+        //             chat.questionType = 1
+        //             obj.content.noTab = true
+        //           } else {
+        //             chat.questionType = 2
+        //           }
+        //         }
+        //         chat.showtype = obj.type
+        //         chat.content = JSON.parse(event.data)
+        //         chat.copyText = JSON.parse(event.data)
+        //         loading.value = false
+        //         loadingmodel.value = ''
+        //         if(navQueryType.value.type == 'cqsm'){
+        //           chatList_cqsm.value.push(chat)
+        //           console.log('对话list：：：', chatList_cqsm.value)
+        //         }else if(navQueryType.value.type == 'rgcs'){
+        //           chatList_rgcs.value.push(chat)
+        //           console.log('对话list：：：', chatList_rgcs.value)
+        //         }
+        //       } else if(obj.type == 'gpt'){
+        //         if(requestObj.base64_type !=2){
+        //           step.value = 2
+        //           console.log('obj',obj)
+        //           // if (event.data.indexOf('<br><br>') != -1) {
+        //           //     event.data = event.data.replace('<br><br>', '\n\n')
+        //           // }
+        //           // if(event.data.indexOf('<br>') != -1){
+        //           //   event.data = event.data.replace('<br>','\n')
+        //           // }
+                
+        //           // if(obj.content == '[DONE]'){
+        //           //     console.info('结束')
+        //           //     loading.value = false
+        //           //     chat.copyText = text.value
+        //           //     chat.content = marked(text.value)
+        //           //     if(navQueryType.value.type == 'cqsm'){
+        //           //       chatList_cqsm.value.push(chat)
+        //           //     }else if(navQueryType.value.type == 'rgcs'){
+        //           //       chatList_rgcs.value.push(chat)
+        //           //     }
+        //           //     text.value = ''
+        //           //     htmlText.value = ''
+        //           //     step.value = 3
+        //           //     n=2
+        //           //     eventSource.close()
+        //           // }else{
+        //             text.value += objcontent
+        //             htmlText.value = marked(text.value);
+        //             console.log('text.value,,,',text.value)
+        //             setTimeout(() => {
+        //                 scrollToBottom() 
+        //             },50)
+        //           // 
+        //         }else{
+        //           text.value += objcontent
+        //         }
+        //       } else if(obj.type == 'gpt-audio'){
+        //         store.commit('setGptAudioLoading', false)
+        //         store.commit('setGptAudio',obj.content)
+        //       }else if(obj.type == 'text-user'){
+        //         chat = {
+        //           role: 'user',
+        //           content: obj.content,
+        //           copyText: obj.content,
+        //           showtype:'text',
+        //           submodel: obj.modelType,
+        //           msgId:obj.msg_question_id,
+        //           msggroup: time.value,
+        //           islike: false,
+        //           base64_type: 0,
+        //           base64_content: '',
+        //         }
+        //         if(requestObj.base64_type ==2 ){
+        //           if(navQueryType.value.type == 'cqsm'){
+        //             chatList_cqsm.value.push(chat)
+        //             console.log('对话list：：：', chatList_cqsm.value)
+        //           }else if(navQueryType.value.type == 'rgcs'){
+        //             chatList_rgcs.value.push(chat)
+        //             console.log('对话list：：：', chatList_rgcs.value)
+        //           }
+        //         }
+        //       }else if(obj.type == '[DONE]'){
+        //             console.info('结束')
+        //             chat.type = 'gpt'
+        //             chat.showtype = 'gpt'
+        //             loading.value = false
+        //             chat.copyText = text.value
+        //             chat.content = marked(text.value)
+        //             if(navQueryType.value.type == 'cqsm'){
+        //               chatList_cqsm.value.push(chat)
+        //             }else if(navQueryType.value.type == 'rgcs'){
+        //               chatList_rgcs.value.push(chat)
+        //             }
+        //             text.value = ''
+        //             htmlText.value = ''
+        //             step.value = 3
+        //             eventSource.close()
+        //         }
+        //       else if (obj.type == 'error'){
+        //             console.info('error')
+        //             if(obj.code == 6001){
+        //               EventBus.$emit('goSubscribe')
+        //             }
+        //             if(obj.code == 7001){
+        //               chat = {
+        //                 role: 'assistant',
+        //                 // content:result.data.data,
+        //                 showtype: 'dateTime',
+        //                 submodel: submodel_current,
+        //                 msggroup:time.value,
+        //                 msgId: obj.msg_answer_id,
+        //                 islike: obj.islike,
+        //                 base64_type: 0,
+        //               }
+        //               chat.content = ''
+        //               if(obj.code == 7001){
+        //               chat = {
+        //                 role: 'assistant',
+        //                 // content:result.data.data,
+        //                 showtype: 'dateTime',
+        //                 submodel: obj.modelType,
+        //                 msggroup:time.value,
+        //                 msgId: obj.msg_answer_id,
+        //                 islike: obj.islike,
+        //                 base64_type: 0,
+        //               }
+        //               chat.content = ''
+        //               if(navQueryType.value.type == 'cqsm'){
+        //                 chatList_cqsm.value.push(chat)
+        //               }else if(navQueryType.value.type == 'rgcs'){
+        //                 chatList_rgcs.value.push(chat)
+        //               }
+        //             }
+        //             if(obj.code == 8101){
+        //               ElMessage({
+        //                 message: t('serve500AlertTip'),
+        //                 type: 'error',
+        //               })
+        //             }
+        //             }
+        //             if(obj.code == 8101){
+        //               ElMessage({
+        //                 message: t('serve500AlertTip'),
+        //                 type: 'error',
+        //               })
+        //             }
+        //             loading.value = false
+        //             text.value = ''
+        //             htmlText.value = ''
+        //             step.value = 3
+        //             eventSource.close()
+        //       }
+        //     };
+        //     eventSource.onerror = (error) => {
+        //         console.error('EventSource failed:', error)
+        //         loading.value = false
+        //         loadingmodel.value = ''
+        //         step.value = 3
+        //         eventSource.close()
+        //     };
+        //     eventSource.stream();
+        //   }catch(error){
+        //     console.log('error',error)
+        //   }
+        // } else
+        //  if(navQueryType.value.type == 'scbz' ||
+        //   navQueryType.value.type=='sxxz' || 
+        //   navQueryType.value.type == 'tlp' || 
+        //   navQueryType.value.type == 'qmcm' ||
+        //   navQueryType.value.type == 'zybg' ||
+        //   navQueryType.value.type == 'hypd' ||
+        //   navQueryType.value.type == 'gsqm' ||
+        //   navQueryType.value.type == 'zgjm' ||
+        //   navQueryType.value.type == 'fsbj' ||
+        //   navQueryType.value.type == 'sxjm' ||
+        //   navQueryType.value.type == 'hdnj' ||
+        //   navQueryType.value.type == 'hljr' ||
+        //   navQueryType.value.type == 'zwds' ||
+        //   navQueryType.value.type == 'smsz' ||
+        //   navQueryType.value.type == 'hmxj'
+        // ) {
             const chat = {
               role: 'user',
               content:questionText,
-              copyText:questionText,
+              copyText: questionText,
               showtype:'text',
-              submodel: navQueryType.value.type == 'sxxz'?sxxzType.value.submodel:cqsmType.value.submodel,
+              submodel: isSubmodule?submodel_current:navQueryType.value.module,
               msggroup: time.value,
               islike: false,
+              base64_type: requestObj.base64_type,
+              base64_content:fileBase64String,
+              user_receive_type: user_receive_type,// 用户需要返回类型：1-纯文本；2-语音和文本 
             }
-            chatList.value.push(chat)
-            chatList_cqsm.value.push(chat)
-            loading.value = true
+            if(reqType == 'likeFun'){
+              chat.islike = true
+            }
+            // chatList_scbz.value.push(chat)
+            if(reqType == 'likeFun'){
+              likeLoading.value = true
+            }else{
+              loading.value = true
+            }
+            if(requestObj.base64_type ==2 ){
+              store.commit('setGptAudioLoading', true)
+            }
             // likeType.value = ""
-            loadingmodel.value = navQueryType.value.type == 'sxxz'?sxxzType.value.submodel:cqsmType.value.submodel
-            step.value = 1
-          }
-          setTimeout(() => {
-              scrollToBottom() 
-              store.commit('setQuestion', '')
-          },50)
-          let userQueList = []
-          const model1 = navQueryType.value.type == 'sxxz'?sxxzType.value.submodel:cqsmType.value.submodel
-          const chat1 = navQueryType.value.type == 'sxxz'?chatList:chatList_cqsm
-          chat1.value.forEach(item =>  {
-            if(item.submodel == model1){
-                userQueList.push({ 
-                  "type": item.role == 'user'? 'user' : item.showtype,
-                  "content": item.content
-                })
+            if(isSubmodule){
+              loadingmodel.value = submodel_current
+            }else{
+              loadingmodel.value = navQueryType.value.module
             }
-          })
-          const requestData =  {
-                "module":navQueryType.value.type == 'sxxz'?'a':'k',
-                "sub_module":navQueryType.value.type == 'sxxz'?sxxzType.value.submodel:cqsmType.value.submodel,
+            step.value = 1
+            setTimeout(() => {
+                scrollToBottom() 
+                store.commit('setQuestion', '')
+                store.commit('setImgBase64', '')
+            },50)
+            let userQueList = []
+            let model1
+            let chat1
+            // let chatArr
+            if(isSubmodule){
+                model1 = submodel_current
+                chat1 = chatList_current
+            }else{
+              model1 = navQueryType.value.module
+              chat1 = chatList_scbz
+            }
+            if(reqType == 'likeFun'){
+              chat1.value = chat1.value.filter(item=>!item.islike)
+            }
+            chat1.value.forEach(item =>  {
+              if(item.submodel == model1){
+                userQueList.push({ 
+                  "type": item.role == 'user' || item.showtype=='date-transfered-message' ? 'user' : item.showtype,
+                  "content": item.content,
+                  "msgId": item.msgId ? item.msgId:'',  
+                  "base64_type": item.base64_type,  // 是否是图片消息，1是；0否
+                  "base64_content": '',
+                  "file_type": item.base64_type!=2 ? '' : 'mp3', // 文件的类型
+                  "user_receive_type": item.user_receive_type ? item.user_receive_type : 1,// 用户需要返回类型：1-纯文本；2-语音和文本 
+                })
+              }
+            })
+            // if(reqType == 'likeFun'){
+            //   userQueList.push({
+            //     "type": chat.role,
+            //     "content": chat.content,
+            //     "msgId": chat.msgId ? chat.msgId:'',  
+            //     "base64_type": 0,  // 是否是图片消息，1是；0否
+            //     "base64_content": '', // 文件的base64编码
+            //     "file_type":  '', // 文件的类型
+            //     "user_receive_type": user_receive_type,
+            //   })
+            // }else 
+            if(reqType != 'DateTime'){
+              userQueList.push({
+                "type": chat.role,
+                "content": chat.content,
+                "msgId": chat.msgId ? chat.msgId:'',  
+                "base64_type": requestObj.base64_type?requestObj.base64_type : 0,  // 是否是图片消息，1是；0否
+                // "base64_content": requestObj.base64_type != 0 ? fileBase64String : '',
+                "base64_content": requestObj.base64_type == 1 ? fileBase64String :  requestObj.base64_type == 2 ? fileBase64String.split("base64,")[1] : '', // 文件的base64编码
+                "file_type": requestObj.base64_type!=2 ? '' : 'mp3', // 文件的类型
+                "user_receive_type": user_receive_type,
+              })
+            }
+            if(requestObj.base64_type !=2 && reqType != 'DateTime'){
+              if(isSubmodule){
+                if(navQueryType.value.type == 'cqsm'){
+                  chatList_cqsm.value.push(chat)
+                }else if(navQueryType.value.type == 'rgcs'){
+                  chatList_rgcs.value.push(chat)
+                }
+              }else{
+                chatList_scbz.value.push(chat)
+              }
+            }
+            if(timeVal.value){
+              timeVal.value = timeVal.value.replace(':', '-')
+            } 
+            if(navQueryType.value.type == 'hypd'){
+              if(timeVal2.value){
+                timeVal2.value = timeVal2.value.replace(':', '-')
+              }
+              gender.value = 'male'
+            }
+            let requestData =  {
+                "module":navQueryType.value.module,
+                "sub_module": isSubmodule?submodel_current : '',
                 "messages":userQueList,
                 "msggroup": time.value,
                 "gpt_mode": userModel.value == '3.5'? 1 : 2,
-                islike:false,
+                islike: false,
               }
+              if(reqType == 'DateTime'){
+                requestData.birthday = dateVal.value+'-'+timeVal.value;
+                requestData.birthday_wife = dateVal2.value+'-'+timeVal2.value;
+                requestData.name_man = maleName.value;
+                requestData.name_woman = femaleName.value;
+                requestData.sex = gender.value;
+              }
+              if(reqType == 'likeFun'){
+                requestData.islike = true
+              }
+              if( navQueryType.value.type == 'sxxz'){
+                requestData.sub_module = 'a-1'
+              }
+              // if(reqType == 'likeFun'){
+              //   likeLoading.value = true
+              // }
           try{
-
-            eventSource = new SSE(apiurl.value, {
+            eventSource = new SSE(v1chatUrl.value, {
               headers: {
                 'Content-Type': 'application/json', 
                 'Authorization': localStorage.getItem('starloomAI-token'),
@@ -873,73 +1739,215 @@ export default {
               // 第一次返回： text|tem
             // 如果 是tem ，第二次返回整个json字符串；如果是text，第二次，到第N次按照流输出一个字一个字的，遇到[DONE]结束
               console.log('1111,',event.data)
-              if(n==2) return
-              if(n==0){
               const obj = JSON.parse(event.data)
-                chat = {
+              const objcontent = obj.content
+              chat = {
                   role: 'assistant',
                   // content:result.data.data,
                   showtype: obj.type,
                   submodel: obj.modelType,  //a-1
                   msggroup:time.value,
-                  msgId: obj.msgIds[1],
-                  islike:false,
+                  msgId: obj.msg_answer_id,
+                  islike: obj.islike,
+                  base64_type: 0,
                 }
-                resObj.value = JSON.parse(event.data)
-                const lengthnum = chatList_cqsm.value.length
-                chatList_cqsm.value[lengthnum-1].msgId =  obj.msgIds[0]
-                n = 1
-              }else {
-                if(chat.showtype == 'tem'){
-                  eventSource.close()
-                  if(sxxzType.value.submodel == 'a-7'){
-                    if(event.data.totalCount){
-                      chat.questionType = 1
-                      event.data.data.noTab = true
-                    } else {
-                      chat.questionType = 2
-                    }
+              resObj.value = JSON.parse(event.data)
+              if(requestObj.base64_type !=2 && reqType != 'DateTime'){           
+                if(navQueryType.value.type == 'cqsm'){
+                  const lengthnum = chatList_cqsm.value.length
+                  chatList_cqsm.value[lengthnum-1].msgId = obj.msg_question_id
+                }else if(navQueryType.value.type == 'rgcs'){
+                  const lengthnum = chatList_rgcs.value.length
+                  chatList_rgcs.value[lengthnum-1].msgId = obj.msg_question_id
+                }else{
+                  const lengthnum = chatList_scbz.value.length
+                  chatList_scbz.value[lengthnum-1].msgId =  obj.msg_question_id
+                }       
+              }
+              
+              n = 1
+              console.log('obj,',obj)
+              if(obj.type == 'tem'){ 
+                eventSource.close()
+                if(sxxzType.value.submodel == 'a-7'){
+                  if(obj.content.totalCount){
+                    chat.questionType = 1
+                    obj.content.noTab = true
+                  } else {
+                    chat.questionType = 2
                   }
-                  chat.content = JSON.parse(event.data) 
-                  chat.copyText = JSON.parse(event.data)
-                  loading.value = false
-                  loadingmodel.value = ''
-                  chatList.value.push(chat)
-                  chatList_cqsm.value.push(chat)
-                  console.log('对话list：：：', chatList.value)
-                } else if (chat.showtype == 'text'){
-                  if (event.data === '[DONE]') {
-                    console.info('结束')
-                    loading.value = false
-                    chat.content = marked(text.value)
-                    chat.copyText = text.value
-                    htmlText.value = marked(text.value);
-                    chatList.value.push(chat)
+                }
+                chat.showtype = obj.type
+                chat.content = JSON.parse(event.data)
+                chat.copyText = JSON.parse(event.data)
+              if(reqType == 'likeFun'){
+                likeLoading.value = false
+              }else{
+                loading.value = false
+              }
+                loadingmodel.value = ''
+                if(isSubmodule){
+                  if(navQueryType.value.type == 'cqsm'){
                     chatList_cqsm.value.push(chat)
+                  }else if(navQueryType.value.type == 'rgcs'){
+                    chatList_rgcs.value.push(chat)
+                  }
+                }else{
+                  chatList_scbz.value.push(chat)
+                }
+                console.log('对话list：：：', chatList_scbz.value)
+              } else if(obj.type == 'gpt'){ 
+                if(requestObj.base64_type != 2){
+                  step.value = 2
+                  console.log('obj',obj)
+                
+                  // if (event.data.indexOf('<br><br>') != -1) {
+                  //     event.data = event.data.replace('<br><br>', '\n\n')
+                  // }
+                  // if(event.data.indexOf('<br>') != -1){
+                  //   event.data = event.data.replace('<br>','\n')
+                  // }
+                
+                  // if(obj.content == '[DONE]'){
+                  //     console.info('结束')
+                  //     loading.value = false
+                  //     chat.copyText = text.value
+                  //     chat.content = marked(text.value)
+                  //     chatList_scbz.value.push(chat)
+                  //     text.value = ''
+                  //     htmlText.value = ''
+                  //     step.value = 3
+                  //     n=2
+                  //     eventSource.close()
+                  // }else{
+                    text.value += objcontent
+                    htmlText.value = marked(text.value);
+                    console.log('text.value,,,',text.value)
+                    setTimeout(() => {
+                        scrollToBottom() 
+                    },50)
+                  // }
+                }else{
+                  text.value += objcontent
+                }
+              } else if(obj.type == 'gpt-audio'){
+                store.commit('setGptAudioLoading', false)
+                store.commit('setGptAudio',obj.content)
+              }else if(obj.type == 'text-user'){
+                chat = {
+                  role: 'user',
+                  content: obj.content,
+                  copyText: obj.content,
+                  showtype:'text',
+                  submodel: navQueryType.value.module,
+                  msgId:obj.msg_question_id,
+                  msggroup: time.value,
+                  islike: false,
+                  base64_type: 0,
+                  base64_content: '',
+                }
+                if(requestObj.base64_type ==2 ){
+                if(isSubmodule){
+                  if(navQueryType.value.type == 'cqsm'){
+                    chatList_cqsm.value.push(chat)
+                  }else if(navQueryType.value.type == 'rgcs'){
+                    chatList_rgcs.value.push(chat)
+                  }
+                }else{
+                  chatList_scbz.value.push(chat)
+                }
+              }
+              }
+              else if(obj.type == 'date-transfered-message'){
+                if(reqType == 'DateTime'){
+                  chat.msgId = obj.msg_question_id
+                  chat.content = obj.content.content
+                  chat.copyText = obj.content.content
+                  chat.isDateTime = true
+                  if(isSubmodule){
+                    if(navQueryType.value.type == 'cqsm'){
+                      chatList_cqsm.value.push(chat)
+                    }else if(navQueryType.value.type == 'rgcs'){
+                      chatList_rgcs.value.push(chat)
+                    }
+                  }else{
+                    chatList_scbz.value.push(chat)
+                  }
+                }
+              }
+              else if (obj.type == 'error'){
+                    console.info('error')
+                    if(obj.code == 6001){
+                      EventBus.$emit('goSubscribe')
+                    }
+                    if(obj.code == 7001){
+                      chat = {
+                        role: 'assistant',
+                        // content:result.data.data,
+                        showtype: 'dateTime',
+                        submodel: obj.modelType,  //a-1
+                        msggroup:time.value,
+                        msgId: obj.msg_answer_id,
+                        islike: obj.islike,
+                        base64_type: 0,
+                      }
+                      chat.content = ''
+                      if(isSubmodule){
+                        if(navQueryType.value.type == 'cqsm'){
+                          chatList_cqsm.value.push(chat)
+                        }else if(navQueryType.value.type == 'rgcs'){
+                          chatList_rgcs.value.push(chat)
+                        }
+                      }else{
+                        chatList_scbz.value.push(chat)
+                      }
+                    }
+                    if(obj.code == 8101){
+                      ElMessage({
+                        message: t('serve500AlertTip'),
+                        type: 'error',
+                      })
+                    }
+                    loading.value = false
                     text.value = ''
                     htmlText.value = ''
                     step.value = 3
                     n=2
                     eventSource.close()
-                  } else {
-                      step.value = 2
-                      console.log('event.data,,,',event.data)
-                      // if (event.data.indexOf('<br><br>') != -1) {
-                      //     event.data = event.data.replace('<br><br>', '\n\n')
-                      // }
-                      // if(event.data.indexOf('<br>') != -1){
-                      //   event.data = event.data.replace('<br>','\n')
-                      // }
-                     
-                      text.value += event.data
-                      htmlText.value = marked(text.value);
-                      console.log('text.value,,,',text.value)
-                      setTimeout(() => {
-                          scrollToBottom() 
-                          store.commit('setQuestion', '')
-                      },50)
+              } else if(obj.type == '[DONE]'){
+                // chat = {
+                //   role: 'assistant',
+                //   // content:result.data.data,
+                //   showtype: obj.type,
+                //   submodel: obj.modelType,  //a-1
+                //   msggroup:time.value,
+                //   msgId: obj.msg_answer_id,
+                //   islike: obj.islike,
+                //   base64_type: 0,
+                // }
+                chat.showtype = 'gpt'
+                  console.info('结束')
+                  if(reqType == 'likeFun'){
+                    likeLoading.value = false
+                  }else{
+                    loading.value = false
                   }
-                }
+                  chat.copyText = text.value
+                  chat.content = marked(text.value)
+                  if(isSubmodule){
+                    if(navQueryType.value.type == 'cqsm'){
+                      chatList_cqsm.value.push(chat)
+                    }else if(navQueryType.value.type == 'rgcs'){
+                      chatList_rgcs.value.push(chat)
+                    }
+                  }else{
+                    chatList_scbz.value.push(chat)
+                  }
+                  text.value = ''
+                  htmlText.value = ''
+                  step.value = 3
+                  n=2
+                  eventSource.close()
               }
             };
             eventSource.onerror = (error) => {
@@ -950,44 +1958,279 @@ export default {
                 eventSource.close()
             };
             eventSource.stream();
-              // const result = await GPTChat({
-              //   "module":"a",
-              //   "sub_module":sxxzType.value.submodel,
-              //   "messages":userQueList,
-              //   "msggroup": time.value,
-              // })
-              // if(result.code == 200){
-              //     const chat = {
-              //         role: 'assistant',
-              //         content:result.data.data,
-              //         showtype:result.data.type,
-              //         submodel: result.data.modelType,  //a-1
-              //         msggroup: time.value,
-              //     }
-              //     if(sxxzType.value.submodel == 'a-7'){
-              //       if(result.data.data.totalCount){
-              //         chat.questionType = 1
-              //         result.data.data.noTab = true
-              //       } else {
-              //         chat.questionType = 2
-              //       }
-              //     }
-              //     if(result.data.type == 'text'){
-              //       showText.value = result.data.data
-              //       resObj.value = result.data
-              //       resObj.value.msggroup = time.value
-              //       step.value = 2
-              //       chatType.value = 'text'
-              //     }else{
-              //       loading.value = false
-              //       loadingmodel.value = ''
-              //       chatList.value.push(chat)
-              //     }
-              // }else{
-              //   loading.value = false
-              //   loadingmodel.value = ''
-              //   step.value = 3
-              // }
+          }catch(error){
+
+          }
+        // }
+    }
+
+    const sendDateTime = async (dateObj) => {
+        sendMessage('','DateTime',dateObj)
+        return
+        if(loading.value){
+                return
+        } 
+        if(dateObj){
+          dateVal.value = dateObj.date
+          timeVal.value = dateObj.time
+          gender.value = dateObj.sex
+          dateVal2.value = dateObj.dateVal2
+          timeVal2.value = dateObj.timeVal2
+          maleName.value = dateObj.maleName
+          femaleName.value = dateObj.femaleName
+        }
+        if(navQueryType.value.type == 'hypd'){
+          if(!femaleName.value ){
+            ElMessage({
+                message: t('pleaseEnterfemaleName'),
+                type: 'error',
+              })
+              return  
+          }
+          if(!dateVal2.value ){
+            ElMessage({
+                message: t('pleaseSelectDate'),
+                type: 'error',
+              })
+              return  
+          }
+          if(!timeVal2.value ){
+            ElMessage({
+                message: t('pleaseSelectTime'),
+                type: 'error',
+              })
+              return  
+          }
+          if(!maleName.value ){
+            ElMessage({
+                message: t('pleaseEnterMaleName'),
+                type: 'error',
+              })
+              return  
+          }
+        } 
+        if(!dateVal.value ){
+          ElMessage({
+              message: t('pleaseSelectDate'),
+              type: 'error',
+            })
+            return  
+        }
+        if(!timeVal.value ){
+          ElMessage({
+              message: t('pleaseSelectTime'),
+              type: 'error',
+            })
+            return  
+        }
+
+       
+        const submodel_current = navQueryType.value.type == 'sxxz'?sxxzType.value.submodel:navQueryType.value.type == 'cqsm'?cqsmType.value.submodel:rgcsType.value.submodel
+        const chatList_current = navQueryType.value.type == 'sxxz'?chatList:navQueryType.value.type == 'cqsm'?chatList_cqsm:chatList_rgcs
+        const module_current = navQueryType.value.type == 'sxxz'?'a':navQueryType.value.type == 'cqsm'?'k':'o'
+          //  || navQueryType.value.type == 'sxxz'
+        if(navQueryType.value.type == 'cqsm' || navQueryType.value.type == 'rgcs'){
+            // const chat = {
+            //   role: 'user',
+            //   content:questionText,
+            //   copyText:questionText,
+            //   showtype:'text',
+            //   submodel: navQueryType.value.type == 'sxxz'?sxxzType.value.submodel:cqsmType.value.submodel,
+            //   msggroup: time.value,
+            //   islike: false,
+            // }
+            // chatList.value.push(chat)
+            // chatList_cqsm.value.push(chat)
+            loading.value = true
+            // likeType.value = ""
+            loadingmodel.value = submodel_current
+            step.value = 1
+          setTimeout(() => {
+              scrollToBottom() 
+              // dateVal.value = ''
+              // timeVal.value = ''
+              // gender.value = 'male'
+          },50)
+          let userQueList = []
+          const model1 = submodel_current
+          const chat1 = chatList_current
+          chat1.value.forEach(item =>  {
+            if(item.submodel == model1){
+                userQueList.push({ 
+                  "type": item.role == 'user'? 'user' : item.showtype,
+                  "content": item.content,
+                  "msgId": item.msgId ? item.msgId:'',  
+                  "base64_type": item.base64_type?item.base64_type:0,  // 是否是图片消息，1是；0否
+                  "base64_content": '',
+                  "file_type": item.base64_type == 2?'mp3':'', // 文件的类型
+                  "user_receive_type": item.user_receive_type,// 用户需要返回类型：1-纯文本；2-语音和文本 
+                })
+            }
+          })
+          timeVal.value = timeVal.value.replace(':', '-')
+          const requestData =  {
+                "module":module_current,
+                "sub_module":submodel_current,
+                "messages":userQueList,
+                "msggroup": time.value,
+                "gpt_mode": userModel.value == '3.5'? 1 : 2,
+                birthday: dateVal.value+'-'+timeVal.value,
+                sex: gender.value,
+                islike:false,
+              }
+          try{
+
+            eventSource = new SSE(v1chatUrl.value, {
+              headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': localStorage.getItem('starloomAI-token'),
+              },
+              payload: JSON.stringify(requestData),
+              method: "POST"
+            });
+            console.info(eventSource)
+            eventSource.onopen = () => {
+                console.log('open')
+            }
+            let n = 0
+            let chat
+            eventSource.onmessage = function(event) {
+              console.log('1111,',event.data)
+              const obj = JSON.parse(event.data)
+              const objcontent = obj.content
+              chat = {
+                  role: 'assistant',
+                  // content:result.data.data,
+                  showtype: obj.type,
+                  submodel: obj.modelType,  //a-1
+                  msggroup:time.value,
+                  msgId: obj.msg_answer_id,
+                  islike: obj.islike,
+                  base64_type: 0,
+                }
+              resObj.value = JSON.parse(event.data)
+              // const lengthnum = chatList_cqsm.value.length
+              // chatList_cqsm.value[lengthnum-1].msgId = obj.msg_question_id
+              n = 1
+              console.log('obj,',obj)
+              if(obj.type == 'tem'){ 
+                eventSource.close()
+                if(sxxzType.value.submodel == 'a-7'){
+                  if(obj.content.totalCount){
+                    chat.questionType = 1
+                    obj.content.noTab = true
+                  } else {
+                    chat.questionType = 2
+                  }
+                }
+                chat.showtype = obj.type
+                chat.content = JSON.parse(event.data)
+                chat.copyText = JSON.parse(event.data)
+                loading.value = false
+                loadingmodel.value = ''
+                if(navQueryType.value.type == 'cqsm'){
+                  chatList_cqsm.value.push(chat)
+                  console.log('对话list：：：', chatList_cqsm.value)
+                }else if(navQueryType.value.type == 'rgcs'){
+                  chatList_rgcs.value.push(chat)
+                  console.log('对话list：：：', chatList_rgcs.value)
+                }
+              } else if(obj.type == 'gpt'){
+                step.value = 2
+                console.log('obj',obj)
+              
+                // if (event.data.indexOf('<br><br>') != -1) {
+                //     event.data = event.data.replace('<br><br>', '\n\n')
+                // }
+                // if(event.data.indexOf('<br>') != -1){
+                //   event.data = event.data.replace('<br>','\n')
+                // }
+               
+                // if(obj.content == '[DONE]'){
+                //     console.info('结束')
+                //     loading.value = false
+                //     chat.copyText = text.value
+                //     chat.content = marked(text.value)
+                //     if(navQueryType.value.type == 'cqsm'){
+                //       chatList_cqsm.value.push(chat)
+                //     }else if(navQueryType.value.type == 'rgcs'){
+                //       chatList_rgcs.value.push(chat)
+                //     }
+                //     text.value = ''
+                //     htmlText.value = ''
+                //     step.value = 3
+                //     n=2
+                //     eventSource.close()
+                // }else{
+                  text.value += objcontent
+                  htmlText.value = marked(text.value);
+                  console.log('text.value,,,',text.value)
+                  setTimeout(() => {
+                      scrollToBottom() 
+                  },50)
+                // }
+              } else if(obj.type == '[DONE]'){
+                    console.info('结束')
+                    loading.value = false
+                    chat.showtype = 'gpt'
+                    chat.copyText = text.value
+                    chat.content = marked(text.value)
+                    if(navQueryType.value.type == 'cqsm'){
+                      chatList_cqsm.value.push(chat)
+                    }else if(navQueryType.value.type == 'rgcs'){
+                      chatList_rgcs.value.push(chat)
+                    }
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    eventSource.close()
+                }
+              else if (obj.type == 'error'){
+                    console.info('error')
+                    if(obj.code == 6001){
+                      EventBus.$emit('goSubscribe')
+                    }
+                    if(obj.code == 7001){
+                      chat = {
+                        role: 'assistant',
+                        // content:result.data.data,
+                        showtype: 'dateTime',
+                        submodel: obj.modelType,
+                        msggroup:time.value,
+                        msgId: obj.msg_answer_id,
+                        islike: obj.islike,
+                        base64_type: 0,
+                      }
+                      chat.content = ''
+                      if(navQueryType.value.type == 'cqsm'){
+                        chatList_cqsm.value.push(chat)
+                      }else if(navQueryType.value.type == 'rgcs'){
+                        chatList_rgcs.value.push(chat)
+                      }
+                    }
+                    if(obj.code == 8101){
+                      ElMessage({
+                        message: t('serve500AlertTip'),
+                        type: 'error',
+                      })
+                    }
+                    loading.value = false
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    eventSource.close()
+              }
+            };
+            eventSource.onerror = (error) => {
+                console.error('EventSource failed:', error)
+                loading.value = false
+                loadingmodel.value = ''
+                step.value = 3
+                eventSource.close()
+            };
+            eventSource.stream();
           }catch(error){
             console.log('error',error)
           }
@@ -1000,50 +2243,73 @@ export default {
           navQueryType.value.type == 'gsqm' ||
           navQueryType.value.type == 'zgjm' ||
           navQueryType.value.type == 'fsbj' ||
+          navQueryType.value.type == 'sxjm' ||
           navQueryType.value.type == 'hdnj' ||
           navQueryType.value.type == 'hljr' ||
+          navQueryType.value.type == 'zwds' ||
+          navQueryType.value.type == 'smsz' ||
           navQueryType.value.type == 'hmxj'
         ) {
-            const chat = {
-              role: 'user',
-              content:questionText,
-              copyText: questionText,
-              showtype:'text',
-              submodel: navQueryType.value.module,
-              msggroup: time.value,
-              islike: false,
-            }
-            chatList_scbz.value.push(chat)
+            // const chat = {
+            //   role: 'user',
+            //   content:questionText,
+            //   copyText: questionText,
+            //   showtype:'text',
+            //   submodel: navQueryType.value.module,
+            //   msggroup: time.value,
+            //   islike: false,
+            // }
+            // chatList_scbz.value.push(chat)
             loading.value = true
             // likeType.value = ""
             loadingmodel.value = navQueryType.value.module
             step.value = 1
             setTimeout(() => {
                 scrollToBottom() 
-                store.commit('setQuestion', '')
+                // dateVal.value = ''
+                // timeVal.value = ''
+                // gender.value = 'male'
             },50)
             let userQueList = []
             chatList_scbz.value.forEach(item =>  {
               if(item.submodel == navQueryType.value.module){
                 userQueList.push({ 
                   "type": item.role == 'user'? 'user' : item.showtype,
-                  "content": item.content
+                  "content": item.content,
+                  "msgId": item.msgId ? item.msgId:'',  
+                  "base64_type": item.base64_type?item.base64_type:0,  // 是否是图片消息，1是；0否
+                  "base64_content": '',
+                  "file_type": item.base64_type == 2?'mp3':'', // 文件的类型
+                  "user_receive_type": item.user_receive_type,// 用户需要返回类型：1-纯文本；2-语音和文本 
                 })
               }
             })
+            timeVal.value = timeVal.value.replace(':', '-')
+            if(navQueryType.value.type == 'hypd'){
+              if(timeVal2.value){
+                timeVal2.value = timeVal2.value.replace(':', '-')
+              }
+              gender.value = 'male'
+            }
+           
             const requestData =  {
                 "module":navQueryType.value.module,
                // "sub_module":sxxzType.value.submodel,
                 "messages":userQueList,
                 "msggroup": time.value,
                 "gpt_mode": userModel.value == '3.5'? 1 : 2,
+                birthday: dateVal.value+'-'+timeVal.value,
+                birthday_wife: dateVal2.value+'-'+timeVal2.value,
+                name_man:maleName.value,
+                name_woman:femaleName.value,
+                sex: gender.value,
                 islike: false,
               }
               if( navQueryType.value.type == 'sxxz'){
                 requestData.sub_module = 'a-1'
               }
           try{
-            eventSource = new SSE(apiurl.value, {
+            eventSource = new SSE(v1chatUrl.value, {
               headers: {
                 'Content-Type': 'application/json', 
                 'Authorization': localStorage.getItem('starloomAI-token'),
@@ -1058,45 +2324,75 @@ export default {
             let n = 0
             let chat
             eventSource.onmessage = function(event) {
-              // 第一次返回： text|tem
-            // 如果 是tem ，第二次返回整个json字符串；如果是text，第二次，到第N次按照流输出一个字一个字的，遇到[DONE]结束
+            
               console.log('1111,',event.data)
-              if(n==2) return
-              if(n==0){
-                const obj = JSON.parse(event.data)
-                chat = {
+              const obj = JSON.parse(event.data)
+              const objcontent = obj.content
+              chat = {
                   role: 'assistant',
                   // content:result.data.data,
                   showtype: obj.type,
                   submodel: obj.modelType,  //a-1
                   msggroup:time.value,
-                  msgId: obj.msgIds[1],
+                  msgId: obj.msg_answer_id,
                   islike: obj.islike,
+                  base64_type: 0,
                 }
-                resObj.value = JSON.parse(event.data)
-                const lengthnum = chatList_scbz.value.length
-                chatList_scbz.value[lengthnum-1].msgId =  obj.msgIds[0]
-                n = 1
-              }else {
-                if(chat.showtype == 'tem'){
-                  eventSource.close()
-                  if(sxxzType.value.submodel == 'a-7'){
-                    if(event.data.totalCount){
-                      chat.questionType = 1
-                      event.data.data.noTab = true
-                    } else {
-                      chat.questionType = 2
-                    }
+              resObj.value = JSON.parse(event.data)
+              // const lengthnum = chatList_scbz.value.length
+              // chatList_scbz.value[lengthnum-1].msgId =  obj.msg_question_id
+              n = 1
+              console.log('obj,',obj)
+              if(obj.type == 'tem'){ 
+                eventSource.close()
+                if(sxxzType.value.submodel == 'a-7'){
+                  if(obj.content.totalCount){
+                    chat.questionType = 1
+                    obj.content.noTab = true
+                  } else {
+                    chat.questionType = 2
                   }
-                  chat.content = JSON.parse(event.data)
-                  chat.copyText = JSON.parse(event.data)
-                  loading.value = false
-                  loadingmodel.value = ''
-                  chatList_scbz.value.push(chat)
-                  console.log('对话list：：：', chatList_scbz.value)
-                } else if (chat.showtype == 'text'){
-                  if (event.data === '[DONE]') {
+                }
+                chat.showtype = obj.type
+                chat.content = JSON.parse(event.data)
+                chat.copyText = JSON.parse(event.data)
+                loading.value = false
+                loadingmodel.value = ''
+                chatList_scbz.value.push(chat)
+                console.log('对话list：：：', chatList_scbz.value)
+              } else if(obj.type == 'gpt'){
+                step.value = 2
+                console.log('obj',obj)
+              
+                // if (event.data.indexOf('<br><br>') != -1) {
+                //     event.data = event.data.replace('<br><br>', '\n\n')
+                // }
+                // if(event.data.indexOf('<br>') != -1){
+                //   event.data = event.data.replace('<br>','\n')
+                // }
+               
+                // if(obj.content == '[DONE]'){
+                //     console.info('结束')
+                //     loading.value = false
+                //     chat.copyText = text.value
+                //     chat.content = marked(text.value)
+                //     chatList_scbz.value.push(chat)
+                //     text.value = ''
+                //     htmlText.value = ''
+                //     step.value = 3
+                //     n=2
+                //     eventSource.close()
+                // }else{
+                  text.value += objcontent
+                  htmlText.value = marked(text.value);
+                  console.log('text.value,,,',text.value)
+                  setTimeout(() => {
+                      scrollToBottom() 
+                  },50)
+                // }
+              } else if(obj.type == '[DONE]'){
                     console.info('结束')
+                    chat.showtype = 'gpt'
                     loading.value = false
                     chat.copyText = text.value
                     chat.content = marked(text.value)
@@ -1106,26 +2402,19 @@ export default {
                     step.value = 3
                     n=2
                     eventSource.close()
-                  } else {
-                      step.value = 2
-                      console.log('event.data,,,',event.data)
-                      // if (event.data.indexOf('<br><br>') != -1) {
-                      //     event.data = event.data.replace('<br><br>', '\n\n')
-                      // }
-                      // if(event.data.indexOf('<br>') != -1){
-                      //   event.data = event.data.replace('<br>','\n')
-                      // }
-                      text.value += event.data
-                      htmlText.value = marked(text.value);
-                      console.log('text.value,,,',text.value)
-                      setTimeout(() => {
-                          scrollToBottom() 
-                          store.commit('setQuestion', '')
-                      },50)
-                  }
                 }
+              else if (obj.type == 'error'){
+                    console.info('error')
+                    if(obj.code == 6001){
+                      EventBus.$emit('goSubscribe')
+                    }
+                    loading.value = false
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    eventSource.close()
               }
-              
             };
             eventSource.onerror = (error) => {
                 console.error('EventSource failed:', error)
@@ -1182,14 +2471,17 @@ export default {
         showtype: 'text',
         submodel: resObj.value.modelType,  //a-1
         msggroup:time.value,
-        msgId: resObj.value.msgIds[1], 
+        msgId: resObj.value.msg_answer_id, 
         islike: false,
+        base64_type: 0,
       }
       // if(navQueryType.value.type == 'sxxz'){
       //   chatList.value.push(chat)
       // }else 
       if(navQueryType.value.type == 'cqsm'){
         chatList_cqsm.value.push(chat)
+      }else if(navQueryType.value.type == 'rgcs'){
+        chatList_rgcs.value.push(chat)
       }else{
         chatList_scbz.value.push(chat)
       }
@@ -1213,6 +2505,7 @@ export default {
           showtype:'text',
           submodel: navQueryType.value.type == 'sxxz'?sxxzType.value.submodel:cqsmType.value.submodel,
           islike: false,
+          base64_type: 0,
         }
         chatList.value.push(chat)
         chatList_cqsm.value.push(chat)
@@ -1224,178 +2517,8 @@ export default {
           // scrollToBottom() 
           store.commit('setQuestion', '')
       },50)
-      if(navQueryType.value.type == 'sxxz'||navQueryType.value.type=='cqsm'){
-        if(sxxzType.value.submodel == 'a-1'){
-              console.log('shengxiaoQuery')
-              try{
-                  const result = await shengxiaoQuery({
-                    query: questionText
-                  })
-                  if(result.code == 200){
-                      const chat = {
-                          role: 'assistant',
-                          content:result.data.data,
-                          copyText: result.data.data,
-                          showtype:result.data.type,
-                          submodel: result.data.modelType,  //a-1
-                          islike: false,
-                      }
-                      if(result.data.type == 'text'){
-                        showText.value = result.data.data
-                        resObj.value = result.data
-                        step.value = 2
-                        chatType.value = 'text'
-                      }else{
-                        loading.value = false
-                        chatList.value.push(chat)
-                        console.log('对话list：：：', chatList.value)
-                      }
-                  }else{
-                    loading.value = false
-                    step.value = 3
-                  }
-              }catch(error){
-
-              }
-          } else if(sxxzType.value.submodel == 'a-2'){
-            console.log('shengxiaoYunshi')
-            try{
-                const result = await shengxiaoYunshi({
-                  query: questionText,
-                })
-                if(result.code == 200){
-                    const chat = {
-                        role: 'assistant',
-                        content: result.data.data,
-                        copyText: result.data.data,
-                        showtype: result.data.type,
-                        submodel: result.data.modelType,
-                        islike: false,
-                    }
-                    if(result.data.type == 'text'){
-                      showText.value = result.data.data
-                      resObj.value = result.data
-                      step.value = 2
-                      chatType.value = 'text'
-                    }else{
-                      chatList.value.push(chat)
-                      loading.value = false
-                      console.log('对话list：：：', chatList.value)
-                    }            
-                    // chatList.value.push(chat)
-                }else{
-                  loading.value = false
-                  step.value = 3
-                }
-            }catch(error){
-
-            }
-          } else if(sxxzType.value.submodel == 'a-4'){
-            console.log('xingzuoXiajiang')
-            try{
-                const result = await xingzuoXiajiang({
-                  query: questionText,
-                })
-                if(result.code == 200){
-                    const chat = {
-                        role: 'assistant',
-                        content: result.data.data,
-                        copyText: result.data.data,
-                        showtype: result.data.type,
-                        submodel: result.data.modelType,
-                        islike: false,
-                    }
-                    if(result.data.type == 'text'){
-                      showText.value = result.data.data
-                      resObj.value = result.data
-                      step.value = 2
-                      chatType.value = 'text'
-                    }else{
-                      chatList.value.push(chat)
-                      loading.value = false
-                      console.log('对话list：：：', chatList.value)
-                    }            
-                    // chatList.value.push(chat)
-                }else{
-                  loading.value = false
-                  step.value = 3
-                }
-            }catch(error){
-
-            }
-          } else if(sxxzType.value.submodel == 'a-5'){
-            console.log('xingzuoyunshi')
-            try{
-                const result = await xingzuoYunshi({
-                  query: questionText,
-                  index: tabIndex ? tabIndex : 0,
-                })
-                if(result.code == 200){
-                    const chat = {
-                        role: 'assistant',
-                        content: result.data.data,
-                        copyText: result.data.data,
-                        showtype: result.data.type,
-                        submodel: result.data.modelType,
-                        islike: false,
-                    }
-                    if(result.data.type == 'text'){
-                      showText.value = result.data.data
-                      resObj.value = result.data
-                      step.value = 2
-                      chatType.value = 'text'
-                    }else{
-                      if(tabIndex || tabIndex==0){
-                        chatList.value[index] = chat
-                      } else{
-                        chatList.value.push(chat)
-                      }
-                      loading.value = false
-                      loadingmodel.value = ''
-                      console.log('对话list：：：', chatList.value)
-                    }
-                    // chatList.value.push(chat)
-                }else{
-                  loading.value = false
-                  loadingmodel.value = ''
-                  step.value = 3
-                }
-            }catch(error){
-
-            }
-          } else if(sxxzType.value.submodel == 'a-6'){
-              console.log('xingzuoChaxun')
-              try{
-                  const result = await xingzuoChaxun({
-                    query: questionText
-                  })
-                  if(result.code == 200){
-                      const chat = {
-                          role: 'assistant',
-                          content:result.data.data,
-                          copyText: result.data.data,
-                          showtype:result.data.type,
-                          submodel: result.data.modelType,  //a-1
-                          islike: false,
-                      }
-                      if(result.data.type == 'text'){
-                        showText.value = result.data.data
-                        resObj.value = result.data
-                        step.value = 2
-                        chatType.value = 'text'
-                      }else{
-                        chatList.value.push(chat)
-                        loading.value = false
-                        console.log('对话list：：：', chatList.value)
-                      }
-                  }else{
-                    loading.value = false
-                    step.value = 3
-                  }
-              }catch(error){
-
-              }
-          } else if(sxxzType.value.submodel == 'a-7'){
+      if(navQueryType.value.type == 'sxxz'){
+          if(sxxzType.value.submodel == 'a-7'){
               console.log('xingzuoRankingQuestion')
               try{
                   const result = await xingzuoRankingQuestion({
@@ -1409,6 +2532,7 @@ export default {
                           showtype:result.data.type,
                           submodel: result.data.modelType,
                           islike: false,
+                          base64_type: 0,
                           questionType: 2,
                       }
                       if(result.data.type == 'text'){
@@ -1428,400 +2552,17 @@ export default {
               }catch(error){
 
               }
-          } else if(sxxzType.value.submodel == 'a-8'){
-              console.log('xingzuoShengrihua')
-              try{
-                  const result = await xingzuoShengrihua({
-                    query: questionText
-                  })
-                  if(result.code == 200){
-                      const chat = {
-                          role: 'assistant',
-                          content:result.data.data,
-                          copyText: result.data.data,
-                          showtype:result.data.type,
-                          submodel: result.data.modelType,
-                          islike: false,
-                      }
-                      if(result.data.type == 'text'){
-                        showText.value = result.data.data
-                        resObj.value = result.data
-                        step.value = 2
-                        chatType.value = 'text'
-                      }else{
-                        chatList.value.push(chat)
-                        loading.value = false
-                        console.log('对话list：：：', chatList.value)
-                      }
-                  }else{
-                    loading.value = false
-                    step.value = 3
-                  }
-              }catch(error){
-
-              }
-          } else if(sxxzType.value.submodel == 'a-9'){
-              console.log('xingzuoYueliang')
-              try{
-                  const result = await xingzuoYueliang({
-                    query: questionText
-                  })
-                  if(result.code == 200){
-                      const chat = {
-                          role: 'assistant',
-                          content:result.data.data,
-                          copyText: result.data.data,
-                          showtype:result.data.type,
-                          submodel: result.data.modelType,
-                          islike: false,
-                      }
-                      if(result.data.type == 'text'){
-                        showText.value = result.data.data
-                        resObj.value = result.data
-                        step.value = 2
-                        chatType.value = 'text'
-                      }else{
-                        chatList.value.push(chat)
-                        loading.value = false
-                        console.log('对话list：：：', chatList.value)
-                      }
-                  }else{
-                    loading.value = false
-                    step.value = 3
-                  }
-              }catch(error){
-
-              }
-              chatList.value.push(chat)
-              loading.value = true
-              loadingmodel.value = navQueryType.value.type == "sxxz"?sxxzType.value.submodel:cqsmType.value.submodel
-              step.value = 1
-            }
-            setTimeout(() => {
-                scrollToBottom() 
-                store.commit('setQuestion', '')
-            },50)
-            let userQueList = []
-            const submodel1=navQueryType.value.type == "sxxz"?sxxzType.value.submodel:cqsmType.value.submodel
-            const chat2 = navQueryType.value.type == "sxxz"?chatList:chatList_cqsm
-            chat2.value.forEach(item =>  {
-              if(item.submodel == submodel1){
-                  userQueList.push({ 
-                    "type": item.role == 'user'? 'user' : item.showtype,
-                    "content": item.content
-                  })
-              }
-            })
-            const requestData =  {
-                  "module":navQueryType.value.type == "sxxz" ? "a" : "k",
-                  "sub_module":navQueryType.value.type == "sxxz"?sxxzType.value.submodel:cqsmType.value.submodel,
-                  "messages":userQueList,
-                  "msggroup": time.value,
-                  "gpt_mode": userModel.value == '3.5'? 1 : 2,
-                  islike: false,
-                }
-            try{
-  
-              eventSource = new SSE(apiurl.value, {
-                headers: {
-                  'Content-Type': 'application/json', 
-                  'Authorization': localStorage.getItem('starloomAI-token'),
-                },
-                payload: JSON.stringify(requestData),
-                method: "POST"
-              });
-              console.info(eventSource)
-              eventSource.onopen = () => {
-                  console.log('open')
-              }
-              let n = 0
-              let chat
-              eventSource.onmessage = function(event) {
-                // 第一次返回： text|tem
-              // 如果 是tem ，第二次返回整个json字符串；如果是text，第二次，到第N次按照流输出一个字一个字的，遇到[DONE]结束
-                console.log('1111,',event.data)
-                if(n==2) return
-                if(n==0){
-                const obj = JSON.parse(event.data)
-                  chat = {
-                    role: 'assistant',
-                    // content:result.data.data,
-                    showtype: obj.type,
-                    submodel: obj.modelType,  //a-1
-                    msggroup:time.value,
-                  }
-                  resObj.value = JSON.parse(event.data)
-                  n = 1
-                }else {
-                  if(chat.showtype == 'tem'){
-                    eventSource.close()
-                    if(sxxzType.value.submodel == 'a-7'){
-                      if(event.data.totalCount){
-                        chat.questionType = 1
-                        event.data.data.noTab = true
-                      } else {
-                        chat.questionType = 2
-                      }
-                    }
-                    chat.content = JSON.parse(event.data)  
-                    chat.copyText = JSON.parse(event.data) 
-                    loading.value = false
-                    loadingmodel.value = ''
-                    chatList.value.push(chat)
-                    chatList_cqsm.value.push(chat)
-                    console.log('对话list：：：', chatList.value)
-                  } else if (chat.showtype == 'text'){
-                    if (event.data === '[DONE]') {
-                      console.info('结束')
-                      loading.value = false
-                      chat.content = marked(text.value)
-                      chat.copyText = text.value
-                      htmlText.value = marked(text.value);
-                      chatList.value.push(chat)
-                      chatList_cqsm.value.push(chat)
-                      text.value = ''
-                      htmlText.value = ''
-                      step.value = 3
-                      n=2
-                      eventSource.close()
-                    } else {
-                        step.value = 2
-                        console.log('event.data,,,',event.data)
-                        // if (event.data.indexOf('<br><br>') != -1) {
-                        //     event.data = event.data.replace('<br><br>', '\n\n')
-                        // }
-                        // if(event.data.indexOf('<br>') != -1){
-                        //   event.data = event.data.replace('<br>','\n')
-                        // }
-                       
-                        text.value += event.data
-                        htmlText.value = marked(text.value);
-                        console.log('text.value,,,',text.value)
-                    }
-                  }
-                }
-              };
-              eventSource.onerror = (error) => {
-                  console.error('EventSource failed:', error)
-                  loading.value = false
-                  loadingmodel.value = ''
-                  step.value = 3
-                  eventSource.close()
-              };
-              eventSource.stream();
-                // const result = await GPTChat({
-                //   "module":"a",
-                //   "sub_module":sxxzType.value.submodel,
-                //   "messages":userQueList,
-                //   "msggroup": time.value,
-                // })
-                // if(result.code == 200){
-                //     const chat = {
-                //         role: 'assistant',
-                //         content:result.data.data,
-                //         showtype:result.data.type,
-                //         submodel: result.data.modelType,  //a-1
-                //         msggroup: time.value,
-                //     }
-                //     if(sxxzType.value.submodel == 'a-7'){
-                //       if(result.data.data.totalCount){
-                //         chat.questionType = 1
-                //         result.data.data.noTab = true
-                //       } else {
-                //         chat.questionType = 2
-                //       }
-                //     }
-                //     if(result.data.type == 'text'){
-                //       showText.value = result.data.data
-                //       resObj.value = result.data
-                //       resObj.value.msggroup = time.value
-                //       step.value = 2
-                //       chatType.value = 'text'
-                //     }else{
-                //       loading.value = false
-                //       loadingmodel.value = ''
-                //       chatList.value.push(chat)
-                //     }
-                // }else{
-                //   loading.value = false
-                //   loadingmodel.value = ''
-                //   step.value = 3
-                // }
-            }catch(error){
-              console.log('error',error)
-            }
-          } else if(navQueryType.value.type == 'scbz' || 
-            navQueryType.value.type == 'qmcm' ||
-            navQueryType.value.type == 'tlp' || 
-            navQueryType.value.type == 'zybg' ||
-            navQueryType.value.type == 'hypd' ||
-            navQueryType.value.type == 'gsqm' ||
-            navQueryType.value.type == 'zgjm' ||
-            navQueryType.value.type == 'fsbj' ||
-            navQueryType.value.type == 'hdnj' ||
-            navQueryType.value.type == 'hljr' ||
-            navQueryType.value.type == 'hmxj'
-          ) {
-              const chat = {
-                role: 'user',
-                content:questionText,
-                copyText: questionText,
-                showtype:'text',
-                submodel: navQueryType.value.module,
-                msggroup: time.value,
-                islike: false,
-              }
-              chatList_scbz.value.push(chat)
-              loading.value = true
-              loadingmodel.value = navQueryType.value.module
-              step.value = 1
-              setTimeout(() => {
-                  scrollToBottom() 
-                  store.commit('setQuestion', '')
-              },50)
-              let userQueList = []
-              chatList_scbz.value.forEach(item =>  {
-                if(item.submodel == navQueryType.value.module){
-                  userQueList.push({ 
-                    "type": item.role == 'user'? 'user' : item.showtype,
-                    "content": item.content
-                  })
-                }
-              })
-              const requestData =  {
-                  "module":navQueryType.value.module,
-                 // "sub_module":sxxzType.value.submodel,
-                  "messages":userQueList,
-                  "msggroup": time.value,
-                  "gpt_mode": userModel.value == '3.5'? 1 : 2,
-                  islike: false,
-                }
-            try{
-              eventSource = new SSE(apiurl.value, {
-                headers: {
-                  'Content-Type': 'application/json', 
-                  'Authorization': localStorage.getItem('starloomAI-token'),
-                },
-                payload: JSON.stringify(requestData),
-                method: "POST"
-              });
-              console.info(eventSource)
-              eventSource.onopen = () => {
-                  console.log('open')
-              }
-              let n = 0
-              let chat
-              eventSource.onmessage = function(event) {
-                // 第一次返回： text|tem
-              // 如果 是tem ，第二次返回整个json字符串；如果是text，第二次，到第N次按照流输出一个字一个字的，遇到[DONE]结束
-                console.log('1111,',event.data)
-                if(n==2) return
-                if(n==0){
-                  const obj = JSON.parse(event.data)
-                  chat = {
-                    role: 'assistant',
-                    // content:result.data.data,
-                    showtype: obj.type,
-                    submodel: obj.modelType,  //a-1
-                    msggroup:time.value,
-                    msgId: obj.msgIds[1],
-                    islike: false,
-                  }
-                  resObj.value = JSON.parse(event.data)
-                  const lengthnum = chatList_scbz.value.length
-                  chatList_scbz.value[lengthnum-1].msgId =  obj.msgIds[0]
-                  n = 1
-                }else {
-                  if(chat.showtype == 'tem'){
-                    eventSource.close()
-                    if(sxxzType.value.submodel == 'a-7'){
-                      if(event.data.totalCount){
-                        chat.questionType = 1
-                        event.data.data.noTab = true
-                      } else {
-                        chat.questionType = 2
-                      }
-                    }
-                    chat.content = JSON.parse(event.data)
-                    chat.copyText = JSON.parse(event.data)
-                    loading.value = false
-                    loadingmodel.value = ''
-                    chatList_scbz.value.push(chat)
-                    console.log('对话list：：：', chatList_scbz.value)
-                  } else if (chat.showtype == 'text'){
-                    if (event.data === '[DONE]') {
-                      console.info('结束')
-                      loading.value = false
-                      chat.content = marked(text.value)
-                      chat.copyText = text.value
-                      chatList_scbz.value.push(chat)
-                      text.value = ''
-                      htmlText.value = ''
-                      step.value = 3
-                      n=2
-                      eventSource.close()
-                    } else {
-                        step.value = 2
-                        console.log('event.data,,,',event.data)
-                        // if (event.data.indexOf('<br><br>') != -1) {
-                        //     event.data = event.data.replace('<br><br>', '\n\n')
-                        // }
-                        // if(event.data.indexOf('<br>') != -1){
-                        //   event.data = event.data.replace('<br>','\n')
-                        // }
-                        text.value += event.data
-                        htmlText.value = marked(text.value);
-                        console.log('text.value,,,',text.value)
-                    }
-                  }
-                }
-                
-              };
-              eventSource.onerror = (error) => {
-                  console.error('EventSource failed:', error)
-                  loading.value = false
-                  loadingmodel.value = ''
-                  step.value = 3
-                  eventSource.close()
-              };
-              eventSource.stream();
-                // const result = await GPTChat({
-                //   "module":navQueryType.value.module,
-                //   // "sub_module":sxxzType.value.submodel,
-                //   "messages":userQueList,
-                //   "msggroup": time.value,
-                // })
-                // if(result.code == 200){
-                //     const chat = {
-                //         role: 'assistant',
-                //         content:result.data.data,
-                //         showtype:result.data.type,
-                //         submodel: result.data.modelType,  //a-1
-                //         msggroup: time.value,
-                //     }
-                //     if(sxxzType.value.submodel == 'a-7'){
-                //       chat.questionType = 1
-                //     }
-                //     if(result.data.type == 'text'){
-                //       showText.value = result.data.data
-                //       resObj.value = result.data
-                //       step.value = 2
-                //       chatType.value = 'text'
-                //     }else{
-                //       loading.value = false
-                //       loadingmodel.value = ''
-                //       chatList_scbz.value.push(chat)
-                //     }
-                // }else{
-                //   loading.value = false
-                //   loadingmodel.value = ''
-                //   step.value = 3
-                // }
-            }catch(error){
-  
-            }
+          } 
           }
       }
+
+    watch(() => lang.value,(val,old) => {
+      if(val=='en'){
+        locale.value = EN
+      }else{
+        locale.value = zhCn
+      }
+    })
       // 生肖星座切换模块
       const changeQuetype = (item) => {
         if(sxxzType.value.submodel !=  item.submodel && item.submodel == 'a-7'){
@@ -1906,6 +2647,7 @@ export default {
                     showtype:result.data.type,
                     submodel: result.data.modelType,  //a-7
                     islike: false,
+                    base64_type:  0,
                     questionType: 1,
                 }
                 if(result.data.type == 'text'){
@@ -1970,6 +2712,7 @@ export default {
             showtype:'text',
             submodel: sxxzType.value.submodel,
             islike: false,
+            base64_type: 0,
           }
       chatList.value.push(chat)
       loading.value = true
@@ -2012,7 +2755,7 @@ export default {
 
       }
     }
-    // 生肖星座切换模块
+    // 抽签算命切换模块
     const changeCQSMtype = (item) => {
        
         console.log(cqsmType.value.submodel)
@@ -2033,6 +2776,25 @@ export default {
         console.log(cqsmType.value.submodel)
         
       }
+    // 抽签算命切换模块
+    const changeRGCStype = (item) => {
+      console.log(rgcsType.value.submodel)
+        rgcsType.value = item
+        // 是否已经有问题 
+        const list_model = chatList_rgcs.value.filter(item => item.role == 'user' && item.submodel == rgcsType.value.submodel)
+        if(list_model.length>0){
+          step.value = 3
+        }else{
+          step.value = 1
+        }
+        const list = chatList_rgcs.value.filter(item => item.submodel == rgcsType.value.submodel && item.msggroup)
+        if(list.length>0){
+          time.value = list[0].msggroup
+        }else{
+          time.value = new Date().getTime() + localStorage.getItem('userId') 
+        }
+        console.log(rgcsType.value.submodel)
+    }
     const shareLinkHandle =  async(mul) =>{ //md5Handle
       // const { MD5 } = require('crypto-js');
       
@@ -2041,12 +2803,14 @@ export default {
       let list
       if(navQueryType.value.type == 'cqsm'){
         list = chatList_cqsm.value.filter(item => item.choose)
+      }else if(navQueryType.value.type == 'rgcs'){
+        list = chatList_rgcs.value.filter(item => item.choose)
       }else{
         list = chatList_scbz.value.filter(item => item.choose)
       }
       if(list.length==0){
         ElMessage({
-            message: '您必须至少选择一条要分享的消息。',
+            message:  t('mustSelectOneShare'),
             type: 'error',
           })
           return
@@ -2113,7 +2877,7 @@ export default {
             //   //   'show-close': false,
             //   // })
               ElMessage({
-                message: '复制链接成功',
+                message:  t('linkCopiedSuccess'),
                 type: 'success',
               })
             //   // 复制成功
@@ -2129,6 +2893,11 @@ export default {
           item.sharePopover = false
         })
         chatList_cqsm.value.forEach(item =>{
+          item.choose = false
+          item.funshow = false
+          item.sharePopover = false
+        })
+        chatList_rgcs.value.forEach(item =>{
           item.choose = false
           item.funshow = false
           item.sharePopover = false
@@ -2149,6 +2918,9 @@ export default {
       if(navQueryType.value.type == 'cqsm'){
         arr = chatList_cqsm.value.filter(item => item.choose)
         // chatList_cqsm.value = chatList_scbz.value.filter(item => !arr.includes(item));
+      }else if(navQueryType.value.type == 'rgcs'){
+        arr = chatList_rgcs.value.filter(item => item.choose)
+        // chatList_rgcs.value = chatList_scbz.value.filter(item => !arr.includes(item));
       }else{
         arr = chatList_scbz.value.filter(item => item.choose)
         // chatList_scbz.value = chatList_scbz.value.filter(item => !arr.includes(item));
@@ -2164,7 +2936,7 @@ export default {
       })
       if(list.length==0){
           ElMessage({
-              message: '您必须至少选择一条要删除的消息。',
+              message: t('mustSelectOneDelete'),
               type: 'error',
             })
             return
@@ -2172,16 +2944,16 @@ export default {
        console.log('list,,,',list)
        if(navQueryType.value.type == 'cqsm'){
           chatList_cqsm.value = chatList_cqsm.value.filter(item => !arr.includes(item));
-          // if(a=="Y") likeType.value = ''
+        }else if(navQueryType.value.type == 'rgcs'){
+          chatList_rgcs.value = chatList_rgcs.value.filter(item => !arr.includes(item));
         }else{
           chatList_scbz.value = chatList_scbz.value.filter(item => !arr.includes(item));
-          // if(a=="Y") likeType.value = ''
         }
       if(!loginStatus.value){
         store.commit('setSelectStatus', false)
         store.commit('setSelectType', '') 
         ElMessage({
-          message: '删除成功',
+          message: t('deletedSuccess'),
           type: 'success',
         })
         return
@@ -2197,7 +2969,7 @@ export default {
         //   'show-close': false,
         // })
         ElMessage({
-          message: '删除成功',
+          message: t('deletedSuccess'),
           type: 'success',
         })
         store.commit('setSelectStatus', false)
@@ -2212,6 +2984,11 @@ export default {
           item.funshow = false
           item.sharePopover = false
         })
+        chatList_rgcs.value.forEach(item =>{
+          item.choose = false
+          item.funshow = false
+          item.sharePopover = false
+        })
         chatList_scbz.value.forEach(item =>{
           item.choose = false
           item.funshow = false
@@ -2221,9 +2998,37 @@ export default {
     }
     const copyHandle =  async(item) => {
       const { toClipboard } = useClipboard()
+        let copyReplace = item.copyText
+        if (copyReplace.indexOf('<br><br>') != -1) {
+          copyReplace = copyReplace.replace(/<br><br>/g, '\n\n')
+        }
+        if(copyReplace.indexOf('<br>') != -1){
+          copyReplace = copyReplace.replace(/<br>/g,'\n')
+        }
+        if(copyReplace.indexOf('<p>') != -1){
+          copyReplace = copyReplace.replace(/<p>/g,'')
+        }
+        if(copyReplace.indexOf('</p>') != -1){
+          copyReplace = copyReplace.replace(/<\/?p>/g, '');
+        }
+        if(copyReplace.indexOf('<stong>') != -1){
+          copyReplace = copyReplace.replace(/<strong>/g,'')
+        }
+        if(copyReplace.indexOf('</strong>') != -1){
+          copyReplace = copyReplace.replace(/<\/?strong>/g, '');
+        }
+        if(copyReplace.indexOf('<b>') != -1){
+          copyReplace = copyReplace.replace(/<b>/g,'')
+        }
+        if(copyReplace.indexOf('</b>') != -1){
+          copyReplace = copyReplace.replace(/<\/?b>/g, '');
+        }
+        if(copyReplace.indexOf('**') != -1){
+          copyReplace = copyReplace.replace(/\*\*/g, '');
+        }
       try {
         // 复制
-        await toClipboard(item.copyText)
+        await toClipboard(copyReplace)
         console.log('success', ElMessage)
         // ElNotification({
         //   duration: 5000,
@@ -2232,7 +3037,7 @@ export default {
         //   'show-close': false,
         // })
         ElMessage({
-          message: '复制成功',
+          message:  t('copysuccess'),
           type: 'success',
         })
         // 复制成功
@@ -2242,28 +3047,35 @@ export default {
     }
     const likeHandle = (liketype, obj)=>{
       obj.likeType = liketype
+    sendMessage('','likeFun',obj)
+    return
       let questionText
       if(liketype == 1){ // 喜欢
-        questionText ='我非常赞同你上述回答，回复我“明白”即可！无需再回复任何信息。'
+        questionText = t('likeChat')
       } else if(liketype == 2){  //不准确
-        questionText ='你的上述回答不准确。回复我“明白”即可！无需再回复任何信息。'
+        questionText = t('inaccurateChat')
       } else if(liketype == 3){ //无益
-        questionText ='你的上述回答对我没有什么帮助。回复我“明白”即可！无需再回复任何信息。'
+        questionText = t('unhelpfulChat')
       } else if(liketype == 4){ //攻击性
-        questionText ='你的上述回答带有攻击性。回复我“明白”即可！无需再回复任何信息。'
+        questionText = t('offensiveChat')
       }
       let list_notlike
       let userchat
-      if(navQueryType.value.type == 'cqsm'){
-        list_notlike =  chatList_cqsm.value.filter(item=>!item.islike)
+      if(navQueryType.value.type == 'cqsm' || navQueryType.value.type == 'rgcs'){
+        if(navQueryType.value.type == 'cqsm'){
+          list_notlike =  chatList_cqsm.value.filter(item=>!item.islike)
+        }else{
+          list_notlike =  chatList_rgcs.value.filter(item=>!item.islike)
+        }
         userchat = {
           role: 'user',
           content:questionText,
           copyText: questionText,
           showtype:'text',
-          submodel: cqsmType.value.submodel,
+          submodel: navQueryType.value.type == 'cqsm'?cqsmType.value.submodel:rgcsType.value.submodel,
           msggroup: time.value,
           islike: true,
+          base64_type: 0,
         }
       }else{
         list_notlike =  chatList_scbz.value.filter(item=>!item.islike)
@@ -2275,6 +3087,7 @@ export default {
           submodel: navQueryType.value.module,
           msggroup: time.value,
           islike: true,
+          base64_type: 0,
         }
       }
       // likeType.value = liketype
@@ -2287,7 +3100,28 @@ export default {
           if(item.submodel == cqsmType.value.submodel){
             userQueList.push({ 
               "type": item.role == 'user'? 'user' : item.showtype,
-              "content": item.content
+              "content": item.content,
+              "msgId": item.msgId ? item.msgId:'',  
+              "base64_type":item.base64_type,  // 是否是图片消息，1是；0否
+              "base64_content": '',
+              "file_type": item.base64_type==2?'mp3':'', // 文件的类型
+              "user_receive_type": item.user_receive_type ? item.user_receive_type : 1,// 用户需要返回类型：1-纯文本；2-语音和文本 
+            })
+          }
+        })
+      }if(navQueryType.value.type == 'rgcs'){
+        chatList_rgcs.value.push(userchat)
+        list_notlike.push(userchat)
+        list_notlike.forEach(item =>  {
+          if(item.submodel == rgcsType.value.submodel){
+            userQueList.push({ 
+              "type": item.role == 'user'? 'user' : item.showtype,
+              "content": item.content,
+              "msgId": item.msgId ? item.msgId:'',  
+              "base64_type": item.base64_type,  // 是否是图片消息，1是；0否
+              "base64_content": '',
+              "file_type": item.base64_type==2?'mp3':'', // 文件的类型
+              "user_receive_type": item.user_receive_type ? item.user_receive_type : 1,// 用户需要返回类型：1-纯文本；2-语音和文本 
             })
           }
         })
@@ -2298,7 +3132,12 @@ export default {
           if(item.submodel == navQueryType.value.module){
             userQueList.push({ 
               "type": item.role == 'user'? 'user' : item.showtype,
-              "content": item.content
+              "content": item.content,
+              "msgId": item.msgId ? item.msgId:'',  
+              "base64_type": item.base64_type,  // 是否是图片消息，1是；0否
+              "base64_content": '',
+              "file_type": item.base64_type==2?'mp3':'', // 文件的类型
+              "user_receive_type": item.user_receive_type ? item.user_receive_type : 1,// 用户需要返回类型：1-纯文本；2-语音和文本 
             })
           }
         })
@@ -2316,7 +3155,7 @@ export default {
             requestData.sub_module = 'a-1'
           }
       try{
-        eventSource = new SSE(apiurl.value, {
+        eventSource = new SSE(v1chatUrl.value, {
           headers: {
             'Content-Type': 'application/json', 
             'Authorization': localStorage.getItem('starloomAI-token'),
@@ -2334,70 +3173,182 @@ export default {
           // 第一次返回： text|tem
         // 如果 是tem ，第二次返回整个json字符串；如果是text，第二次，到第N次按照流输出一个字一个字的，遇到[DONE]结束
           console.log('1111,',event.data)
-          if(n==2) return
-          if(n==0){
-            const obj = JSON.parse(event.data)
-            chat = {
-              role: 'assistant',
-              // content:result.data.data,
-              showtype: obj.type,
-              submodel: obj.modelType,  //a-1
-              msggroup:time.value,
-              msgId: obj.msgIds[1],
-              islike: obj.islike,
-            }
-            resObj.value = JSON.parse(event.data)
+          // if(n==2) return
+          // if(n==0){
+          //   const obj = JSON.parse(event.data)
+          //   chat = {
+          //     role: 'assistant',
+          //     // content:result.data.data,
+          //     showtype: obj.type,
+          //     submodel: obj.modelType,  //a-1
+          //     msggroup:time.value,
+          //     msgId: obj.msgIds[1],
+          //     islike: obj.islike,
+          //   }
+          //   resObj.value = JSON.parse(event.data)
           
-            if(navQueryType.value.type == 'cqsm'){
-              const lengthnum = chatList_cqsm.value.length
-              chatList_cqsm.value[lengthnum-1].msgId =  obj.msgIds[0]
-            }else{
-              const lengthnum = chatList_scbz.value.length
-              chatList_scbz.value[lengthnum-1].msgId =  obj.msgIds[0]
-            }
-            n = 1
-          }else {
-            if(chat.showtype == 'tem'){
-              eventSource.close()
-              if(sxxzType.value.submodel == 'a-7'){
-                if(event.data.totalCount){
-                  chat.questionType = 1
-                  event.data.data.noTab = true
-                } else {
-                  chat.questionType = 2
+          //   if(navQueryType.value.type == 'cqsm'){
+          //     const lengthnum = chatList_cqsm.value.length
+          //     chatList_cqsm.value[lengthnum-1].msgId =  obj.msgIds[0]
+          //   }else{
+          //     const lengthnum = chatList_scbz.value.length
+          //     chatList_scbz.value[lengthnum-1].msgId =  obj.msgIds[0]
+          //   }
+          //   n = 1
+          // }else {
+          //   if(chat.showtype == 'tem'){
+          //     eventSource.close()
+          //     if(sxxzType.value.submodel == 'a-7'){
+          //       if(event.data.totalCount){
+          //         chat.questionType = 1
+          //         event.data.data.noTab = true
+          //       } else {
+          //         chat.questionType = 2
+          //       }
+          //     }
+          //     chat.content = JSON.parse(event.data)
+          //     chat.copyText = JSON.parse(event.data)
+          //     if( navQueryType.value.type == 'cqsm'){
+          //       //navQueryType.value.type == 'sxxz' ||
+          //       chatList_cqsm.value.push(chat)
+          //     } else{
+          //       chatList_scbz.value.push(chat)
+          //     }  
+          //     console.log('对话list：：：', chatList_scbz.value)
+          //   } else if (chat.showtype == 'text'){
+          //     if (event.data === '[DONE]') {
+          //       console.info('结束')
+          //       chat.content = marked(text.value)
+          //       chat.copyText = text.value
+          //       if( navQueryType.value.type == 'cqsm'){
+          //         //navQueryType.value.type == 'sxxz' ||
+          //         chatList_cqsm.value.push(chat)
+          //       } else{
+          //         chatList_scbz.value.push(chat)
+          //       }  
+          //       text.value = ""
+          //       n=2
+          //       eventSource.close()
+          //       likeLoading.value = false
+          //     } else {
+          //         console.log('event.data,,,',event.data)
+          //         text.value += event.data
+          //         console.log('text.value,,,',text.value)
+          //     }
+          //   }
+          // }
+
+          const obj = JSON.parse(event.data)
+              const objcontent = obj.content
+              chat = {
+                  role: 'assistant',
+                  // content:result.data.data,
+                  showtype: obj.type,
+                  submodel: navQueryType.value.type == 'cqsm'?cqsmType.value.submodel:navQueryType.value.type == 'rgcs'?rgcsType.value.submodel:navQueryType.value.module,  //a-1
+                  msggroup:time.value,
+                  msgId: obj.msg_answer_id,
+                  islike: obj.islike,
+                  base64_type: 0,
                 }
+              resObj.value = JSON.parse(event.data)
+              if(navQueryType.value.type == 'cqsm'){
+                const lengthnum = chatList_cqsm.value.length
+                chatList_cqsm.value[lengthnum-1].msgId =  obj.msg_question_id
+              }else if(navQueryType.value.type == 'rgcs'){
+                const lengthnum = chatList_rgcs.value.length
+                chatList_rgcs.value[lengthnum-1].msgId =  obj.msg_question_id
+              }else {
+                const lengthnum = chatList_scbz.value.length
+                chatList_scbz.value[lengthnum-1].msgId =  obj.msg_question_id
               }
-              chat.content = JSON.parse(event.data)
-              chat.copyText = JSON.parse(event.data)
-              if( navQueryType.value.type == 'cqsm'){
-                //navQueryType.value.type == 'sxxz' ||
-                chatList_cqsm.value.push(chat)
-              } else{
-                chatList_scbz.value.push(chat)
-              }  
-              console.log('对话list：：：', chatList_scbz.value)
-            } else if (chat.showtype == 'text'){
-              if (event.data === '[DONE]') {
-                console.info('结束')
-                chat.content = marked(text.value)
-                chat.copyText = text.value
+              n = 1
+              console.log('obj,',obj)
+              if(obj.type == 'tem'){ 
+                eventSource.close()
+                if(sxxzType.value.submodel == 'a-7'){
+                  if(obj.content.totalCount){
+                    chat.questionType = 1
+                    obj.content.noTab = true
+                  } else {
+                    chat.questionType = 2
+                  }
+                }
+                chat.showtype = obj.type
+                chat.content = JSON.parse(event.data)
+                chat.copyText = JSON.parse(event.data)
+                loading.value = false
+                loadingmodel.value = ''
                 if( navQueryType.value.type == 'cqsm'){
                   //navQueryType.value.type == 'sxxz' ||
                   chatList_cqsm.value.push(chat)
                 } else{
                   chatList_scbz.value.push(chat)
                 }  
-                text.value = ""
-                n=2
-                eventSource.close()
-                likeLoading.value = false
-              } else {
+                console.log('对话list：：：', chatList_cqsm.value)
+              } else if(obj.type == 'gpt'){
+                step.value = 2
+                console.log('obj',obj)
+              
+                // if (event.data.indexOf('<br><br>') != -1) {
+                //     event.data = event.data.replace('<br><br>', '\n\n')
+                // }
+                // if(event.data.indexOf('<br>') != -1){
+                //   event.data = event.data.replace('<br>','\n')
+                // }
+               
+                // if(obj.content == '[DONE]'){
+                //     console.info('结束')
+                //     loading.value = false
+                //     chat.copyText = text.value
+                //     chat.content = marked(text.value)
+                //     if( navQueryType.value.type == 'cqsm'){
+                //       //navQueryType.value.type == 'sxxz' ||
+                //       chatList_cqsm.value.push(chat)
+                //     } else{
+                //       chatList_scbz.value.push(chat)
+                //     }  
+                //     text.value = ''
+                //     htmlText.value = ''
+                //     step.value = 3
+                //     n=2
+                //     eventSource.close()
+                // }else{
                   console.log('event.data,,,',event.data)
-                  text.value += event.data
+                  text.value += objcontent
                   console.log('text.value,,,',text.value)
-              }
-            }
-          }
+                // }
+              } else if (obj.type == 'error'){
+                    console.info('error')
+                    if(obj.code == 6001){
+                      EventBus.$emit('goSubscribe')
+                    }
+                    loading.value = false
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    eventSource.close()
+              }else if(obj.content == '[DONE]'){
+                    console.info('结束')
+                    loading.value = false
+                    chat.showtype = 'gpt'
+                    chat.copyText = text.value
+                    chat.content = marked(text.value)
+                    if( navQueryType.value.type == 'cqsm'){
+                      //navQueryType.value.type == 'sxxz' ||
+                      chatList_cqsm.value.push(chat)
+                    }else if( navQueryType.value.type == 'rgcs'){
+                      chatList_rgcs.value.push(chat)
+                    }else{
+                      chatList_scbz.value.push(chat)
+                    }  
+                    text.value = ''
+                    htmlText.value = ''
+                    step.value = 3
+                    n=2
+                    likeLoading.value = false
+                    eventSource.close()
+                }
           
         };
         eventSource.onerror = (error) => {
@@ -2420,6 +3371,21 @@ export default {
     const closeDisLike = () => {
       disLikeDialog.value = false
     }
+
+    const chooseGender = (g)=>{
+      gender.value = g
+    }
+
+    const disabledDate = (date) => {
+      const currentDate = new Date();
+      const year = date.getFullYear();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+      const currentDay = currentDate.getDate();
+      
+      // 禁用1900年之前和当前日期之后的日期
+      return year < 1900 || (year === currentYear && date > currentDate) || year > currentYear;
+    };
 
    return {
       constellation: [
@@ -2446,123 +3412,140 @@ export default {
         {
           type: "gylq",
           submodel: "k-1",
-          name: "观音灵签",
+          name: 'guanyinOracle', // 观音灵签
           defaultQue:
-            "亲爱的众生，欢迎来到观音灵签的神圣空间。在此，我们先与救苦救难的观音菩萨建立心灵的连接。请您合十，默念三遍[救苦救难观音菩萨]，然后默念您的姓名、出生时辰、年龄与地址。请心中默念您的请求，无论是关于婚姻、事业还是财运。当您准备好后，请告诉我开始抽签，我们将一同寻找观音菩萨为您指点的答案。",
+           'gylq_openremarks'
         },
         {
           type: "gdlq",
           submodel: "k-2",
-          name: "关帝灵签",
+          name: 'guanYuOracle',  // 关帝灵签
           defaultQue:
-            "各位信众，欢迎来到关帝灵签的神秘殿堂。在开始之前，让我们首先向威武的关帝老爷致以三拜，以示诚挚的敬意。请您在默念自己的姓名、出生时辰、年龄及地址后，心中思索您所寻求的指引，无论是关于婚姻、事业或财运。当您的意念明确，告诉我开始抽签，关帝老爷将为您指明前路。",
+          'gdlq_openremarks'
         },
         {
           type: "lzlq",
           submodel: "k-3",
-          name: "吕祖灵签",
+          name: 'lüDongbinOracle',  // 吕祖灵签
           defaultQue:
-            "亲爱的信徒，欢迎您来到吕祖灵签的神圣领域。在我们揭晓天命之前，请向仁慈的吕祖恭敬地拜上三拜，并默念您的姓名、出生资讯和地址。当您的内心诉求—无论是关于婚姻、事业还是财运—都已经凝结，告诉我开始抽签，我们将跟随吕祖的指引，走向命运的答案。",
+          'lzlq_openremarks'
         },
         {
           type: "yllq",
           submodel: "k-4",
-          name: "月老灵签",
+          name: 'yueLaoOracle',  // 月老灵签
           defaultQue:
-            "亲爱的寻缘者，欢迎来到月下老人的神秘之地。在我们揭晓您的姻缘之前，请向月老恭敬地拜三拜，并默念您的姓名与出生信息。心中的疑虑和期望，清晰地呈现。当您心意已决，告诉我开始抽签，我们一同看月老如何为您指点前程。",
+          'yllq_openremarks'
         },
         {
           type: "hdxlq",
           submodel: "k-5",
-          name: "黄大仙灵签",
+          name: 'wongTaiSinOracle',  // 黄大仙灵签
           defaultQue:
-            "各位信士，在黄大仙的庇佑之下，我们先行三拜，默念个人的姓名、时辰、年龄和地址，寻求对于婚姻、事业、财运等方面的神示。现在请告诉我开始抽签！",
+          'hdxlq_openremarks'
         },
         {
           type: "fzlq",
           submodel: "k-6",
-          name: "佛祖灵签",
+          name: 'buddhaOracle', // 佛祖灵签
           defaultQue:
-            "亲爱的佛友。在这神圣的一刹，让我们合十，三遍默诵“佛祖慈悲，指点迷津”，心中默念自己姓名，出生时辰，年龄，地址，请求佛祖对我们的婚姻、事业、财运给予明确的指示。准备好了请告诉我开始抽签！",
+          'fzlq_openremarks'
         },
         {
           type: "mzlq",
           submodel: "k-7",
-          name: "妈祖灵签",
+          name: 'matsuOracle',   // 妈祖灵签
           defaultQue:
-            "各位敬仰妈祖的信徒，在这特殊的时刻，双手合十，默念“妈祖娘娘，指点迷津”三遍，，然后默念自己的姓名、生辰、年龄和地址，请求娘娘关于婚姻、事业、财运的启示。当您准备好后，请告诉我开始抽签！",
+          'mzlq_openremarks'
         },
         {
           type: "cslq",
           submodel: "k-8",
-          name: "财神灵签",
+          name: 'godWealthOracle',  // 财神灵签
           defaultQue:
-            "各位求财者，在这充满变数的世界里，您双手合十，诚心地默念：“财神驾到，指点迷津”三次。然后，为让财神更了解您，您默念自己的详细信息：姓名、出生时辰、年龄和地址。在此基础上，您真诚地希望财神能为您在婚姻、事业和财运上给予建议。当您准备好后，请告诉我开始抽签！",
+          'cslq_openremarks'
         },
         {
           type: "dzwlq",
           submodel: "k-9",
-          name: "地藏王灵签",
+          name: 'KsitigarbhaOracle',  // 地藏王灵签
           defaultQue:
-            "亲爱的信徒，欢迎来到地藏王灵签的神秘空间，在面对生活中的疑惑与迷茫的时候，您静心地双手合十，全神贯注地默念：“地藏王驾到，指点迷津”三遍。仔细地默念自己的姓名、出生的具体时辰、年龄和住址，请求关于婚姻、事业和财运的答案，当您已经准备好了，请告诉我开始抽签！",
+          'dzwlq_openremarks'
         },
         {
           type: "tsljlq",
           submodel: "k-10",
-          name: "太上老君灵签",
+          name: 'laoziOracle',   // 太上老君灵签
           defaultQue:
-            "各位道教的信徒，在太上老君的庇佑下，双手合十，您默默地默念：“太上老君，指点迷津”三次，仔细地默念自己的姓名、出生时辰、年龄和地址。心中对于婚姻、事业和财运的不确定，您请求老君的指引，如果您已经准备好了，请告诉我开始抽签！",
+          'tslqlq_openremarks'
         },
         {
           type: "yj64glq",
           submodel: "k-11",
-          name: "易经64卦灵签",
+          name: 'IChingOracle',  // 易经64卦灵签
           defaultQue:
-            "各位虔诚的信徒，在生活的波涛中，双手合十，深情地默念：“周文易经，指点迷津”三次。为了与易经的智慧更加贴近，您仔细地默念自己的姓名、出生的具体时辰、年龄和住址。对于未来的各种问题，如婚姻、事业和财运，您恳求易经给予您明确的建议，您准备好后，告诉我开始抽签！",
+          'yj64glq_openremarks'
         },
         {
           type: "lhlq",
           submodel: "k-12",
-          name: "罗汉灵签",
+          name: 'arhatOracle', // 罗汉灵签
           defaultQue:
-            "亲爱的罗汉的信徒，生活的道路上，五百罗汉的智慧与指引常被视为宝贵的财富。因此，您深情地双手合十，默念：“五百罗汉，指点迷津”三遍，心中默念自己的姓名、出生的时辰、年龄和地址。心中充满了对未来婚姻、事业和财运的疑虑，准备好后，请告诉我开始抽签！",
+          'lhlq_openremarks'
         },
         {
           type: "wspslq",
           submodel: "k-13",
-          name: "文殊菩萨灵签",
+          name: 'manjushriOracle',  // 文殊菩萨灵签
           defaultQue:
-            "亲爱的信徒，在人生的旅途中，文殊菩萨的智慧经常为迷茫者提供方向。双手合十，全心全意地默念：“文殊菩萨，指点迷津”三次。认真地默念您的姓名、出生时辰、年龄和地址。对于未来的婚姻、事业、财运等重要命题，对于未来的婚姻、事业和财运，您带着旺盛的好奇和期待请求指点，如果准备好了，请告诉我开始抽签！",
+          'wspslq_openremarks'
         },
         {
           type: "ltylq",
           submodel: "k-14",
-          name: "老天爷灵签",
+          name: 'jadeEmperorOracle' ,  //老天爷灵签
           defaultQue:
-            "亲爱的大运之人，在无数次的选择与机遇中，有时我们希望得到超越凡人的指示，向老天爷拜下三拜，默念了自己的姓名、出生时辰、年龄和住址，好让老天爷明确地了解您的身份，带着这种心情，准备好请告诉我开始抽签！",
+          'ltylq_openremarks'
         },
         {
           type: "jglq",
           submodel: "k-15",
-          name: "济公灵签",
-          defaultQue:
-            "虔诚的信徒，在人生旅途的某个交叉点，向济公深深地三拜，希望他能指引您走出人生的迷雾，默念自己姓名，出生时辰，年龄，地址还有那未知的缘分和姻缘，如果准备好了，请告诉我开始抽签！",
+          name: 'JiGongOracle' ,   // 济公灵签
+          defaultQue:    
+          'jglq_openremarks'
         },
         {
           type: "qtdslq",
           submodel: "k-16",
-          name: "齐天大圣灵签",
+          name: 'SunWukongOracle',  // 齐天大圣灵签
           defaultQue:
-            "愤愤天道不公的信徒，当命运之网似乎将您困于纷繁的尘埃中时，虔诚的先向齐天大圣拜三拜，诚求指示，向大圣娓娓道来自己的姓名，出生时辰，年龄，地址，关于那未知的缘分，关于那悬而未决的姻缘，如果您住备好了，请告诉我开始抽签！",
+          'qtdslq_openremarks'
         },
         {
           type: "txdyq",
           submodel: "k-17",
-          name: "天下第一签",
+          name: 'theFirstOracle',   // 天下第一签
           defaultQue:
-            "亲爱的众生，向那位气度非凡，神态慈悲的观音菩萨深深地躬身，拜上三拜，心中默诵着自己的名字、生辰、年龄与住址，无论是关于婚姻、事业还是财运。当您准备好后，请告诉我开始抽签，我们将一同寻找观音菩萨为您指点的答案。",
+          'txdylq_openremarks'
         },
+        {
+          type: "ysq",
+          submodel: "k-18",
+          name: 'royalOracleStick',   // 御私签
+          defaultQue:
+          'ysq_openremarks'
+        },
+        
       ],
+      rgcsArr: [
+        {type:'jxrg', submodel:'o-1', name:'jxrg',defaultQue:'jxrg_openremarks'},  // 九型人格
+        {type:'rgrg', submodel:'o-2', name:'rgrg',defaultQue:'rgrg_openremarks'}, // 荣格人格
+        {type:'mblxzsq', submodel:'o-3', name:'mblxzsq',defaultQue:'mblxzsq_openremarks'},  // Myers-Briggs类型指示器
+        {type:'DISCrgpg', submodel:'o-4', name:'DISCrgpg',defaultQue:'DISCrgpg_openremarks'}, // DISC人格评估
+        {type:'kexqzpxq', submodel:'o-5', name:'kexqzpxq', defaultQue:'kexqzpxq_openremarks'},  // 凯尔西气质排序器
+        {type:'sjfgmx', submodel:'o-6', name:'sjfgmx',defaultQue:'sjfgmx_openremarks'},  // 社交风格模型
+        {type:'wxxg', submodel:'o-7', name:'wxxg',defaultQue:'wxxg_openremarks'},    // 五行性格
+      ], 
       chatList,
       chatList_cqsm,
       chatList_scbz,
@@ -2605,11 +3588,29 @@ export default {
       loginStatus,
       // likeType,
       apiurl,
+      v1chatUrl,
       sharelink,
       list_current,
       likeItemObj,
       likeLoading,
       haveCount,
+      dateVal,
+      timeVal,
+      dateVal2,
+      timeVal2,
+      chooseGender,
+      gender,
+      sendDateTime,
+      changeRGCStype,
+      rgcsType,
+      chatList_rgcs,
+      locale,
+      disabledDate,
+      maleName,
+      femaleName,
+      lang,
+      receiveType,
+      gptAudioLoading,
       // RelatedQuestions,
    } 
   },
@@ -2635,6 +3636,7 @@ export default {
     PlanetInHouse,
     PlanetInSign,
     DisLikeReason,
+    DateTimeSelect,
   },
   watch:{
     // chatList(val, old){
@@ -2647,6 +3649,8 @@ export default {
       // } else
        if(val.module == 'k'){
         userList_module = this.chatList_cqsm.filter( item => item.role == 'user' && item.submodel == this.cqsmType.submodel)
+      }else if(val.module == 'o'){
+        userList_module = this.chatList_rgcs.filter( item => item.role == 'user' && item.submodel == this.rgcsType.submodel)
       }else {
         userList_module = this.chatList_scbz.filter( item => item.role == 'user' && item.submodel == this.navQueryType.module)
       }
@@ -2702,20 +3706,26 @@ export default {
     },
     // 重新响应
     regenerateResponse(){
-      if(!this.haveCount){
-        EventBus.$emit('goSubscribe')
-        return
-      }
+      // if(!this.haveCount){
+      //   EventBus.$emit('goSubscribe')
+      //   return
+      // }
       let userList
       // if(this.navQueryType.type=='sxxz'){
       // userList = this.chatList.filter( item => item.role == 'user' && item.submodel == this.sxxzType.submodel)     
       // } else 
       if(this.navQueryType.type=='cqsm'){
         userList = this.chatList_cqsm.filter( item => item.role == 'user' && item.submodel == this.cqsmType.submodel && !item.islike) 
-      } else{
+      }else if(this.navQueryType.type=='rgcs'){
+        userList = this.chatList_rgcs.filter( item => item.role == 'user' && item.submodel == this.rgcsType.submodel && !item.islike) 
+      }else{
         userList = this.chatList_scbz.filter( item => item.role == 'user' && item.submodel == this.navQueryType.module  && !item.islike)
       }
-      this.sendMessage(userList[userList.length - 1].content)
+      this.sendMessage({
+        question: userList[userList.length - 1].content,
+        base64String: userList[userList.length - 1].base64_content,
+        base64_type:userList[userList.length - 1].base64_type,
+      })
       const self = this
       setTimeout(() => {
           self.scrollToBottom() 
@@ -2843,6 +3853,7 @@ export default {
 }
 </script>
 
+
 <style scoped lang='scss'>
 .index{
   padding: .5rem 5.5% 0 5.3%;
@@ -2871,6 +3882,9 @@ export default {
       &.active{
         background: linear-gradient(180deg, #FFECAA 0%, #DE9932 100%);
         color: #000000;
+      }
+      &.rgcs_li{
+        width: 13.25%;
       }
     }
   }
@@ -2995,6 +4009,7 @@ export default {
             line-height: 16px;
             font-family: Poppins-Regular, Poppins;
             max-width: calc(100% - 1rem);
+            cursor:default;
         }
         // .cursorafter{
         //   display: flex;
@@ -3024,6 +4039,12 @@ export default {
           border-radius: .3rem .1rem  .3rem  .3rem;
           color: #000000;
           word-break: break-all;
+          cursor:default;
+          img{
+            width: 100%;
+            height: 100%;
+            margin-bottom: 0.2rem;
+          }
         }
       }         
     }
@@ -3038,6 +4059,7 @@ export default {
           line-height: 0.45rem;
           // font-size: .24rem;
           font-size: .259rem;
+          cursor:default;
           // padding: .6rem .4rem;
           .zindex{
             z-index: 1111;
@@ -3182,13 +4204,155 @@ export default {
         margin-top: .2rem;
         .inner{
           max-width: 100%;
+          cursor:default;
         }
       }
     }
   }
 }
+.setList{
+  display: flex;
+  width: 240px;
+  margin: 0 auto;
+  justify-content: space-around;
+  .list{
+    display: flex;
+    align-items: center;
+    // margin-right: .2rem;
+    font-size: 0.26rem;
+    font-family: Poppins-Regular, Poppins;
+    cursor: pointer;
+    img{
+      margin-right: .05rem;
+      width: .5rem;
+    }
+  }
+  .xian{
+    background: #FFFFFF;
+    height: 20px;
+    opacity: 0.6;
+    width: 1px;
+  }
+  &.mb-setList{
+    width: 200px;
+  }
+}
+.dateTimeMaxDiv{
+  // display: flex;
+  // flex-wrap: wrap;
+  .birthBox{
+    display: flex;
+    align-items: center;
+    margin-top: .2rem;
+    flex-wrap: wrap;
+    .dateTextDiv{
+      width: 3.67rem;
+    }
+  }
+  .bottomDiv{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .flexDiv{
+    display: flex;
+    align-items: center;
+    // flex-wrap: wrap;
+    &.flexWrap{
+      flex-wrap: wrap;
+    }
+    .nameBox{
+      // width: 4rem;
+      margin-right: .5rem;
+      margin-top: 0.2rem;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      white-space: nowrap;
+      .textdiv{
+        width: 2.07rem;
+      }
+      .width100{
+        width: 100%;
+      }
+      .nameInput{
+        background: #FFF3DE;
+        outline: none;
+        border: none;
+        height: 30px;
+        width: 3.5rem;
+        border-radius: 0.05rem;
+        padding-left: 10px;
+
+      }
+      .nameInput::-webkit-input-placeholder{
+        color: #a7abb3;
+      }
+    }
+  }
+  .dateTimeDiv{
+    display: flex;
+    // flex-wrap: wrap;
+    .datePicker{
+      margin-right: .2rem;
+    }
+    .timePicker{
+      margin-right: .2rem;
+    }
+  }
+  .genderDiv{
+      display: flex;
+      align-items: center;
+      margin-top: .2rem;
+      .malebox,.femalebox{
+        display: flex;
+        align-items: center;
+        margin-right: .15rem;
+        cursor: pointer;
+        .wai{
+          background: #FFF3DE;
+          border-radius: 4px;
+          width: 0.37rem;
+          height: 0.37rem;
+          margin-right: .1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          .nei{
+            border-radius: 4px;
+            width: 0.259rem;
+            height: 0.259rem;
+            &.active{
+              background: #FF8800;
+            }
+          }
+        }
+      }
+    }
+    .okBtn{
+      margin-top: .2rem;
+      width: 1.44rem;
+      height: .55rem;
+      background: linear-gradient(180deg, #FDE8A5 0%, #E2A544 100%);
+      border-radius: 4px;
+      font-family: Inter-Medium, Inter;
+      // font-weight: 500;
+      color: #000000;
+      text-align: center;
+      line-height: .55rem;
+    }
+}
 </style>
 <style>
+.el-input__wrapper {
+ background:#FFF3DE;
+}
+.el-date-editor {
+  --el-date-editor-width: 140px;
+}
+.el-popper[data-popper-placement^=top] .el-popper__arrow::before {
+    background: #000000;
+}
 .three-bounce {
   text-align: left;
   display: flex;

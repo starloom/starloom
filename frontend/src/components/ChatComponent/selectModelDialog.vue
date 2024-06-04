@@ -5,7 +5,7 @@
         :show-close="false"
         :before-close="handleClose"
         :close-on-click-modal="false"
-        :width="screenWidth<=800 ? '80%' :'400px'"
+        :width="screenWidth<=800 ? '85%' :'400px'"
         center
         >
         <!-- <template #header="{ close }">
@@ -14,7 +14,7 @@
             </div>
         </template> -->
         <div class="cont">
-          <div class="text">选择模型</div>
+          <div class="text">{{ $t('selectModel') }}</div>
           <div class="reasonbox">
             <ul>
               <li class="moudel_li" @click="changeModel('3.5')" :class="userModel=='3.5'? 'greenBorder' : ''">
@@ -23,21 +23,21 @@
                     <div class="top_div">
                       <div class="left">
                         <template v-if="userModel=='3.5'">
-                          <img src="/@/assets/images/moudelchoose_green.svg" alt="">
-                          <div class="choosetext activeGreen">已选</div>
+                          <img class="moudelchoose_green" src="/@/assets/images/moudelchoose_green.svg" alt="">
+                          <div class="choosetext activeGreen">{{ $t('selected') }}</div>
                         </template>
                         <template v-else>
-                          <img src="/@/assets/images/moudelchoose_grey.svg" alt="">
-                          <div class="choosetext">选择</div>
+                          <img  class="moudelchoose_grey" src="/@/assets/images/moudelchoose_grey.svg" alt="">
+                          <div class="choosetext">{{ $t('select') }}</div>
                         </template>
                       </div>
                       <div class="right green">
-                        限时免费
+                        {{ $t('limitedTimeFree') }}
                       </div>
                     </div>
                   </div>
                   <div class="bottomdiv " :class="userModel=='3.5'? 'active' : ''">   
-                    <div class="modelType"> 基础版</div>
+                    <div class="modelType">{{ $t('basic') }}</div>
                   </div>
                 </div>
                 <div class="xiangyunBox">
@@ -51,23 +51,23 @@
                     <div class="top_div">
                       <div class="left">
                         <template v-if="userModel=='4'">
-                          <img src="/@/assets/images/moudelchoose_yellow.svg" alt="">
-                          <div class="choosetext activeYellow">已选</div>
+                          <img class="moudelchoose_green" src="/@/assets/images/moudelchoose_yellow.svg" alt="">
+                          <div class="choosetext activeYellow">{{ $t('selected') }}</div>
                         </template>
                         <template v-else>
-                          <img src="/@/assets/images/moudelchoose_grey.svg" alt="">
-                          <div class="choosetext">选择</div>
+                          <img  class="moudelchoose_grey" src="/@/assets/images/moudelchoose_grey.svg" alt="">
+                          <div class="choosetext">{{ $t('select') }}</div>
                         </template>
                       </div>
                       <div class="right yellow">
-                        限时2条
+                        {{ $t('limited2Free') }}
                       </div>
                     </div>
                   </div>
                   <div class="bottomdiv " :class="userModel=='4'? 'active' : ''">
-                    <div class="modelType"> Plus版</div>
+                    <div class="modelType">{{ $t('plus') }}</div>
                     <div class="btn" v-if="userModel=='4'" @click="SubscribeOpen">
-                      订阅
+                      {{ $t('subscribe') }}
                     </div>
                   </div>             
                 </div>
@@ -80,7 +80,7 @@
           </div>
           <div class="bottom">
             <div class="closeBtn" @click="handleClose">
-              进去聊天
+              {{ $t('enterToChat') }}
             </div>
           </div>
         </div>
@@ -232,6 +232,7 @@
                 .top_div{
                   display: flex;
                   justify-content: space-between;
+                  align-items: center;
                 }
                 .left{
                   display: flex;
@@ -241,7 +242,14 @@
                   img{
                     margin-right: -.3rem;
                     z-index: 1;
+                    &.moudelchoose_green{
+                      width: .6rem;
+                    }
+                    &.moudelchoose_grey{
+                      width: .5rem;
+                    }
                   }
+
                   .choosetext{
                     background: #FFFFFF;
                     border: 1px solid #ECECEC;
@@ -270,6 +278,7 @@
                     border: 1px solid #04DB00;
                     background: #A2FFBC;
                     color: #007737;
+                    white-space: nowrap;
                   }
                   &.yellow{
                     color: #7E6200;
@@ -293,12 +302,13 @@
                 // height: .5rem;
                 width: 100%;
                 .modelType{
-                  height: 1.35rem;
-                  line-height: 1.35rem;
+                  height: 0.9rem;
+                  // line-height: 1.35rem;
                   text-align: center;
                   display: flex;
                   justify-content: center;
                   align-items: center;
+                  margin-top: .45rem;
                 }
                 &.active{
                   color: #000000;
@@ -341,6 +351,7 @@
           line-height: 1rem;
           border-radius:.3rem ;
           font-size: .35rem;
+          cursor: pointer;
         }
       }
 

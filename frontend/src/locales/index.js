@@ -9,7 +9,9 @@ import en from './en.js'
 //   lang = language.indexOf('zh') != '-1' ? 'zh' : 'en'
 // }
 let lang = 'zh'
-
+localStorage.setItem('lang',lang)
+console.log('setlang,,,',lang)
+// let lang = 'zh'
 const i18n = createI18n({
     legacy: false,
     locale: lang,

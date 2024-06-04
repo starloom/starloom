@@ -4,7 +4,7 @@
         v-model="show"
         :show-close="false"
         :before-close="handleClose"
-        :width="screenWidth<=800 ? '70%' :'470px'"
+        :width="screenWidth<=800 ? '80%' :'470px'"
         center
         >
         <!-- <template #header="{ close }">
@@ -13,20 +13,20 @@
             </div>
         </template> -->
         <div class="cont">
-          <div class="text">告诉我们您为什么不喜欢此消息，您的反馈将帮助我们进行改进。</div>
+          <div class="text">{{ $t('feedbackTip') }}</div>
           <div class="reasonbox">
             <ul>
               <li @click="chooseReason(2)">
                 <img src="/@/assets/images/Inaccurate.png" alt="" srcset="">
-                不准确
+                {{ $t('inaccurate') }}
               </li>
               <li @click="chooseReason(3)">
                 <img src="/@/assets/images/useless.png" alt="" srcset="">
-                无益
+                {{ $t('unhelpful') }}
               </li>
               <li @click="chooseReason(4)">
                 <img src="/@/assets/images/Aggression.png" alt="" srcset="">
-                攻击性
+                {{ $t('offensive') }}
               </li>
               <!-- <li>
                 <img src="/@/assets/images/otgerRea.png" alt="" srcset="">
@@ -36,7 +36,7 @@
           </div>
           <div class="bottom">
             <div class="closeBtn" @click="handleClose">
-              关闭
+              {{ $t('close') }}
             </div>
           </div>
         </div>
@@ -165,8 +165,8 @@
             li{
               // height: 1.388rem;
               border: 2px solid #D9C5A1;
-              width: 25%;
-              margin: 0 3.5%;
+              width: 28%;
+              // margin: 0 3.5%;
               border-radius: .37rem;
               text-align: center;
               cursor: pointer;

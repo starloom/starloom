@@ -13,7 +13,7 @@
             </div>
         </template> -->
         <div class="cont">
-          <div class="text">分享到社交媒体</div>
+          <div class="text">  {{ $t('shareOnSocialMedia') }}</div>
           <div class="reasonbox">
             <ul>
               <li @click="shareLink('twitter')"> 
@@ -38,7 +38,7 @@
           </div>
           <div class="bottom">
             <div class="closeBtn" @click="handleClose">
-              关闭
+              {{ $t('close') }}
             </div>
           </div>
         </div>
